@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_py)
+project(rosbag2_py_backport)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,10 +18,10 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
-find_package(rosbag2_compression REQUIRED)
-find_package(rosbag2_cpp REQUIRED)
-find_package(rosbag2_storage REQUIRED)
-find_package(rosbag2_transport REQUIRED)
+find_package(rosbag2_compression_backport REQUIRED)
+find_package(rosbag2_cpp_backport REQUIRED)
+find_package(rosbag2_storage_backport REQUIRED)
+find_package(rosbag2_transport_backport REQUIRED)
 
 # Find python before pybind11
 find_package(python_cmake_module REQUIRED)
@@ -72,9 +72,9 @@ pybind11_add_module(_reader SHARED
   src/rosbag2_py/_reader.cpp
 )
 ament_target_dependencies(_reader PUBLIC
-  "rosbag2_compression"
-  "rosbag2_cpp"
-  "rosbag2_storage"
+  "rosbag2_compression_backport"
+  "rosbag2_cpp_backport"
+  "rosbag2_storage_backport"
 )
 clean_windows_flags(_reader)
 
@@ -83,8 +83,8 @@ pybind11_add_module(_storage SHARED
   src/rosbag2_py/format_bag_metadata.cpp
 )
 ament_target_dependencies(_storage PUBLIC
-  "rosbag2_cpp"
-  "rosbag2_storage"
+  "rosbag2_cpp_backport"
+  "rosbag2_storage_backport"
 )
 clean_windows_flags(_storage)
 
@@ -92,9 +92,9 @@ pybind11_add_module(_writer SHARED
   src/rosbag2_py/_writer.cpp
 )
 ament_target_dependencies(_writer PUBLIC
-  "rosbag2_compression"
-  "rosbag2_cpp"
-  "rosbag2_storage"
+  "rosbag2_compression_backport"
+  "rosbag2_cpp_backport"
+  "rosbag2_storage_backport"
 )
 clean_windows_flags(_writer)
 
@@ -102,8 +102,8 @@ pybind11_add_module(_info SHARED
   src/rosbag2_py/_info.cpp
 )
 ament_target_dependencies(_info PUBLIC
-  "rosbag2_cpp"
-  "rosbag2_storage"
+  "rosbag2_cpp_backport"
+  "rosbag2_storage_backport"
 )
 clean_windows_flags(_info)
 
@@ -111,10 +111,10 @@ pybind11_add_module(_transport SHARED
   src/rosbag2_py/_transport.cpp
 )
 ament_target_dependencies(_transport PUBLIC
-  "rosbag2_compression"
-  "rosbag2_cpp"
-  "rosbag2_storage"
-  "rosbag2_transport"
+  "rosbag2_compression_backport"
+  "rosbag2_cpp_backport"
+  "rosbag2_storage_backport"
+  "rosbag2_transport_backport"
 )
 clean_windows_flags(_transport)
 
@@ -122,8 +122,8 @@ pybind11_add_module(_reindexer SHARED
   src/rosbag2_py/_reindexer.cpp
 )
 ament_target_dependencies(_reindexer PUBLIC
-  "rosbag2_cpp"
-  "rosbag2_storage"
+  "rosbag2_cpp_backport"
+  "rosbag2_storage_backport"
 )
 clean_windows_flags(_reindexer)
 

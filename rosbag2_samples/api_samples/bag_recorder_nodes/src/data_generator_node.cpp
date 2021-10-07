@@ -18,7 +18,7 @@
 #include "example_interfaces/msg/int32.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_cpp/writer.hpp"
+#include "rosbag2_cpp_backport/writer.hpp"
 
 using namespace std::chrono_literals;
 

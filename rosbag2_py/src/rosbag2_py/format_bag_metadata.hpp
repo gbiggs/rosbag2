@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "rosbag2_storage/bag_metadata.hpp"
+#include "rosbag2_storage_backport/bag_metadata.hpp"
 
 std::string format_bag_meta_data(const rosbag2_storage::BagMetadata & metadata);
 

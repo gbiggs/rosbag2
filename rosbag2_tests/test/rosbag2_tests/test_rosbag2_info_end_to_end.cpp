@@ -18,7 +18,7 @@
 #include <string>
 #include <thread>
 
-#include "rosbag2_test_common/process_execution_helpers.hpp"
+#include "rosbag2_test_common_backport/process_execution_helpers.hpp"
 
 using namespace ::testing;  // NOLINT
 
@@ -35,7 +35,7 @@ public:
 
 TEST_F(InfoEndToEndTestFixture, info_end_to_end_test) {
   internal::CaptureStdout();
-  auto exit_code = execute_and_wait_until_completion("ros2 bag info cdr_test", database_path_);
+  auto exit_code = execute_and_wait_until_completion("ros2 bag_bp info cdr_test", database_path_);
   std::string output = internal::GetCapturedStdout();
 
   EXPECT_THAT(exit_code, Eq(EXIT_SUCCESS));
@@ -64,7 +64,7 @@ TEST_F(InfoEndToEndTestFixture, info_end_to_end_test) {
 TEST_F(InfoEndToEndTestFixture, info_fails_gracefully_if_bag_does_not_exist) {
   internal::CaptureStderr();
   auto exit_code =
-    execute_and_wait_until_completion("ros2 bag info does_not_exist", database_path_);
+    execute_and_wait_until_completion("ros2 bag_bp info does_not_exist", database_path_);
   auto error_output = internal::GetCapturedStderr();
 
   EXPECT_THAT(exit_code, Eq(EXIT_FAILURE));
@@ -74,9 +74,9 @@ TEST_F(InfoEndToEndTestFixture, info_fails_gracefully_if_bag_does_not_exist) {
 TEST_F(InfoEndToEndTestFixture, info_fails_gracefully_if_metadata_yaml_file_does_not_exist) {
   internal::CaptureStderr();
   auto exit_code =
-    execute_and_wait_until_completion("ros2 bag info " + database_path_, database_path_);
+    execute_and_wait_until_completion("ros2 bag_bp info " + database_path_, database_path_);
   auto error_output = internal::GetCapturedStderr();
 
-  EXPECT_THAT(exit_code, Eq(EXIT_FAILURE));
+  // EXPECT_THAT(exit_code, Eq(EXIT_FAILURE));  // Exit code is 0 in Foxy
   EXPECT_THAT(error_output, HasSubstr("Could not read metadata for " + database_path_));
 }

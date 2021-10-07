@@ -23,8 +23,8 @@
 #include <vector>
 #include <thread>
 
-#include "rosbag2_storage/ros_helper.hpp"
-#include "rosbag2_storage/serialized_bag_message.hpp"
+#include "rosbag2_storage_backport/ros_helper.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
 
 #include "mock_cache_consumer.hpp"
 #include "mock_message_cache.hpp"

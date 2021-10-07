@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_compression)
+project(rosbag2_compression_backport)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -24,8 +24,8 @@ find_package(ament_cmake REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rcpputils REQUIRED)
 find_package(rcutils REQUIRED)
-find_package(rosbag2_cpp)
-find_package(rosbag2_storage REQUIRED)
+find_package(rosbag2_cpp_backport)
+find_package(rosbag2_storage_backport REQUIRED)
 
 add_library(${PROJECT_NAME}
   SHARED
@@ -41,8 +41,8 @@ ament_target_dependencies(${PROJECT_NAME}
   pluginlib
   rcpputils
   rcutils
-  rosbag2_cpp
-  rosbag2_storage)
+  rosbag2_cpp_backport
+  rosbag2_storage_backport)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ROSBAG2_COMPRESSION_BUILDING_DLL)
 
 # prevent pluginlib from using boost
@@ -62,13 +62,13 @@ install(
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 ament_export_targets(export_${PROJECT_NAME})
-ament_export_dependencies(pluginlib rcpputils rcutils rosbag2_cpp rosbag2_storage)
+ament_export_dependencies(pluginlib rcpputils rcutils rosbag2_cpp_backport rosbag2_storage_backport)
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(rclcpp REQUIRED)
-  find_package(rosbag2_test_common REQUIRED)
+  find_package(rosbag2_test_common_backport REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
   add_library(fake_plugin SHARED
@@ -81,7 +81,7 @@ if(BUILD_TESTING)
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin)
   pluginlib_export_plugin_description_file(
-    rosbag2_compression test/rosbag2_compression/fake_plugin.xml)
+    rosbag2_compression_backport test/rosbag2_compression/fake_plugin.xml)
 
   ament_add_gmock(test_compression_factory
     test/rosbag2_compression/test_compression_factory.cpp)
@@ -96,13 +96,13 @@ if(BUILD_TESTING)
     test/rosbag2_compression/test_sequential_compression_reader.cpp)
   target_include_directories(test_sequential_compression_reader PUBLIC include)
   target_link_libraries(test_sequential_compression_reader ${PROJECT_NAME})
-  ament_target_dependencies(test_sequential_compression_reader rosbag2_cpp rosbag2_storage)
+  ament_target_dependencies(test_sequential_compression_reader rosbag2_cpp_backport rosbag2_storage_backport)
 
   ament_add_gmock(test_sequential_compression_writer
     test/rosbag2_compression/test_sequential_compression_writer.cpp)
   target_include_directories(test_sequential_compression_writer PUBLIC include)
   target_link_libraries(test_sequential_compression_writer ${PROJECT_NAME})
-  ament_target_dependencies(test_sequential_compression_writer rosbag2_cpp rosbag2_storage)
+  ament_target_dependencies(test_sequential_compression_writer rosbag2_cpp_backport rosbag2_storage_backport)
 endif()
 
 ament_package()

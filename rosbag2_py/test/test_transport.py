@@ -24,7 +24,7 @@ if os.environ.get('ROSBAG2_PY_TEST_WITH_RTLD_GLOBAL', None) is not None:
     # For the fun RTTI ABI details, see https://whatofhow.wordpress.com/2015/03/17/odr-rtti-dso/.
     sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
 
-import rosbag2_py  # noqa
+import rosbag2_py_backport  # noqa
 
 
 def test_options_qos_conversion():
@@ -33,10 +33,10 @@ def test_options_qos_conversion():
         '/topic': QoSProfile(depth=10)
     }
 
-    play_options = rosbag2_py.PlayOptions()
+    play_options = rosbag2_py_backport.PlayOptions()
     play_options.topic_qos_profile_overrides = simple_overrides
     assert play_options.topic_qos_profile_overrides == simple_overrides
 
-    record_options = rosbag2_py.RecordOptions()
+    record_options = rosbag2_py_backport.RecordOptions()
     record_options.topic_qos_profile_overrides = simple_overrides
     assert record_options.topic_qos_profile_overrides == simple_overrides

@@ -21,11 +21,11 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_interfaces/srv/is_paused.hpp"
-#include "rosbag2_interfaces/srv/pause.hpp"
-#include "rosbag2_interfaces/srv/resume.hpp"
-#include "rosbag2_interfaces/srv/toggle_paused.hpp"
-#include "rosbag2_transport/player.hpp"
+#include "rosbag2_interfaces_backport/srv/is_paused.hpp"
+#include "rosbag2_interfaces_backport/srv/pause.hpp"
+#include "rosbag2_interfaces_backport/srv/resume.hpp"
+#include "rosbag2_interfaces_backport/srv/toggle_paused.hpp"
+#include "rosbag2_transport_backport/player.hpp"
 #include "test_msgs/msg/basic_types.hpp"
 #include "test_msgs/message_fixtures.hpp"
 
@@ -36,13 +36,13 @@ using namespace ::testing;  // NOLINT
 class PlaySrvsTest : public RosBag2PlayTestFixture
 {
 public:
-  using Pause = rosbag2_interfaces::srv::Pause;
-  using Resume = rosbag2_interfaces::srv::Resume;
-  using TogglePaused = rosbag2_interfaces::srv::TogglePaused;
-  using IsPaused = rosbag2_interfaces::srv::IsPaused;
-  using GetRate = rosbag2_interfaces::srv::GetRate;
-  using SetRate = rosbag2_interfaces::srv::SetRate;
-  using PlayNext = rosbag2_interfaces::srv::PlayNext;
+  using Pause = rosbag2_interfaces_backport::srv::Pause;
+  using Resume = rosbag2_interfaces_backport::srv::Resume;
+  using TogglePaused = rosbag2_interfaces_backport::srv::TogglePaused;
+  using IsPaused = rosbag2_interfaces_backport::srv::IsPaused;
+  using GetRate = rosbag2_interfaces_backport::srv::GetRate;
+  using SetRate = rosbag2_interfaces_backport::srv::SetRate;
+  using PlayNext = rosbag2_interfaces_backport::srv::PlayNext;
 
   PlaySrvsTest()
   : RosBag2PlayTestFixture(),
@@ -117,6 +117,11 @@ public:
     return result->paused;
   }
 
+  bool counter_is_positive()
+  {
+    return message_counter_ > 0;
+  }
+
   /// EXPECT to receive (or not receive) any messages for a period
   void expect_messages(bool messages_should_arrive, bool reset_message_counter = true)
   {
@@ -130,12 +135,12 @@ public:
       EXPECT_EQ(
         got_msg_.wait_for(
           lock, condition_clear_time,
-          [this]() {return message_counter_ > 0;}), false);
+          std::bind(&PlaySrvsTest::counter_is_positive, this)), false);
     } else {
       EXPECT_EQ(
         got_msg_.wait_for(
           lock, condition_clear_time,
-          [this]() {return message_counter_ > 0;}), true);
+          std::bind(&PlaySrvsTest::counter_is_positive, this)), true);
     }
   }
 

@@ -17,9 +17,9 @@ import unittest
 from rclpy.qos import QoSDurabilityPolicy
 from rclpy.qos import QoSHistoryPolicy
 from rclpy.qos import QoSReliabilityPolicy
-from ros2bag.api import convert_yaml_to_qos_profile
-from ros2bag.api import dict_to_duration
-from ros2bag.api import interpret_dict_as_qos_profile
+from ros2bag_backport.api import convert_yaml_to_qos_profile
+from ros2bag_backport.api import dict_to_duration
+from ros2bag_backport.api import interpret_dict_as_qos_profile
 
 
 class TestRos2BagRecord(unittest.TestCase):

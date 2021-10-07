@@ -24,8 +24,8 @@
 #include <string>
 #include <vector>
 
-#include "rosbag2_cpp/reindexer.hpp"
-#include "rosbag2_storage/storage_options.hpp"
+#include "rosbag2_cpp_backport/reindexer.hpp"
+#include "rosbag2_storage_backport/storage_options.hpp"
 
 #include "./pybind11.hpp"
 

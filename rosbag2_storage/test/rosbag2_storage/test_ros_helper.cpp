@@ -15,7 +15,7 @@
 #include <gmock/gmock.h>
 #include <memory>
 
-#include "rosbag2_storage/ros_helper.hpp"
+#include "rosbag2_storage_backport/ros_helper.hpp"
 
 using namespace ::testing;  // NOLINT
 

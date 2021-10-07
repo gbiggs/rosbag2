@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-  <name>rosbag2_test_common</name>
+  <name>rosbag2_test_common_backport</name>
   <version>0.9.1</version>
   <description>Commonly used test helper classes and fixtures for rosbag2</description>
   <maintainer email="karsten@openrobotics.org">Karsten Knese</maintainer>

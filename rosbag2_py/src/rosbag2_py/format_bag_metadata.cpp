@@ -26,7 +26,7 @@
 #include <time.h>
 #endif
 
-#include "rosbag2_storage/bag_metadata.hpp"
+#include "rosbag2_storage_backport/bag_metadata.hpp"
 
 namespace
 {

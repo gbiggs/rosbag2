@@ -29,14 +29,14 @@ if os.environ.get('ROSBAG2_PY_TEST_WITH_RTLD_GLOBAL', None) is not None:
     sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
 
 from common import get_rosbag_options  # noqa
-import rosbag2_py  # noqa
+import rosbag2_py_backport  # noqa
 
 
 def test_sequential_reader():
     bag_path = str(Path(__file__).parent.parent / 'resources' / 'talker')
     storage_options, converter_options = get_rosbag_options(bag_path)
 
-    reader = rosbag2_py.SequentialReader()
+    reader = rosbag2_py_backport.SequentialReader()
     reader.open(storage_options, converter_options)
 
     topic_types = reader.get_all_topics_and_types()
@@ -45,7 +45,7 @@ def test_sequential_reader():
     type_map = {topic_types[i].name: topic_types[i].type for i in range(len(topic_types))}
 
     # Set filter for topic of string type
-    storage_filter = rosbag2_py.StorageFilter(topics=['/topic'])
+    storage_filter = rosbag2_py_backport.StorageFilter(topics=['/topic'])
     reader.set_filter(storage_filter)
 
     msg_counter = 0
@@ -63,7 +63,7 @@ def test_sequential_reader():
     # No filter
     reader.reset_filter()
 
-    reader = rosbag2_py.SequentialReader()
+    reader = rosbag2_py_backport.SequentialReader()
     reader.open(storage_options, converter_options)
 
     msg_counter = 0
@@ -81,5 +81,5 @@ def test_sequential_reader():
 
 
 def test_plugin_list():
-    reader_plugins = rosbag2_py.get_registered_readers()
+    reader_plugins = rosbag2_py_backport.get_registered_readers()
     assert 'my_read_only_test_plugin' in reader_plugins

@@ -27,7 +27,7 @@ if os.environ.get('ROSBAG2_PY_TEST_WITH_RTLD_GLOBAL', None) is not None:
     sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
 
 from common import get_rosbag_options  # noqa
-import rosbag2_py  # noqa
+import rosbag2_py_backport  # noqa
 
 
 def create_topic(writer, topic_name, topic_type, serialization_format='cdr'):
@@ -41,8 +41,8 @@ def create_topic(writer, topic_name, topic_type, serialization_format='cdr'):
     :return:
     """
     topic_name = topic_name
-    topic = rosbag2_py.TopicMetadata(name=topic_name, type=topic_type,
-                                     serialization_format=serialization_format)
+    topic = rosbag2_py_backport.TopicMetadata(name=topic_name, type=topic_type,
+                                              serialization_format=serialization_format)
 
     writer.create_topic(topic)
 
@@ -57,7 +57,7 @@ def test_sequential_writer(tmp_path):
 
     storage_options, converter_options = get_rosbag_options(bag_path)
 
-    writer = rosbag2_py.SequentialWriter()
+    writer = rosbag2_py_backport.SequentialWriter()
     writer.open(storage_options, converter_options)
 
     # create topic
@@ -75,7 +75,7 @@ def test_sequential_writer(tmp_path):
     del writer
     storage_options, converter_options = get_rosbag_options(bag_path)
 
-    reader = rosbag2_py.SequentialReader()
+    reader = rosbag2_py_backport.SequentialReader()
     reader.open(storage_options, converter_options)
 
     topic_types = reader.get_all_topics_and_types()
@@ -97,5 +97,5 @@ def test_sequential_writer(tmp_path):
 
 
 def test_plugin_list():
-    writer_plugins = rosbag2_py.get_registered_writers()
+    writer_plugins = rosbag2_py_backport.get_registered_writers()
     assert 'my_test_plugin' in writer_plugins

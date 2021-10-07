@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_statement_wrapper.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_statement_wrapper.hpp"
 
 #include <cstring>
 #include <memory>
@@ -22,9 +22,9 @@
 #include <vector>
 
 #include "rcutils/logging_macros.h"
-#include "rosbag2_storage/ros_helper.hpp"
+#include "rosbag2_storage_backport/ros_helper.hpp"
 
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_exception.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_exception.hpp"
 
 namespace rosbag2_storage_plugins
 {

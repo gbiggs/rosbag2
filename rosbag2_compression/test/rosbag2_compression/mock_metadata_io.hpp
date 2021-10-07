@@ -21,8 +21,8 @@
 #include <string>
 #include <vector>
 
-#include "rosbag2_storage/bag_metadata.hpp"
-#include "rosbag2_storage/metadata_io.hpp"
+#include "rosbag2_storage_backport/bag_metadata.hpp"
+#include "rosbag2_storage_backport/metadata_io.hpp"
 
 class MockMetadataIo : public rosbag2_storage::MetadataIo
 {

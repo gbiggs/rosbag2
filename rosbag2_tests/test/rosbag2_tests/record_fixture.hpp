@@ -26,10 +26,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_storage.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_storage.hpp"
 
-#include "rosbag2_test_common/temporary_directory_fixture.hpp"
-#include "rosbag2_test_common/memory_management.hpp"
+#include "rosbag2_test_common_backport/temporary_directory_fixture.hpp"
+#include "rosbag2_test_common_backport/memory_management.hpp"
 
 #include "test_msgs/msg/arrays.hpp"
 #include "test_msgs/msg/basic_types.hpp"

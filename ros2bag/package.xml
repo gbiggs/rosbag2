@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-  <name>ros2bag</name>
+  <name>ros2bag_backport</name>
   <version>0.9.1</version>
   <description>
     Entry point for rosbag in ROS 2
@@ -13,8 +13,8 @@
   <license>Apache License 2.0</license>
 
   <depend>ros2cli</depend>
-  <depend>rosbag2_py</depend>
-  <depend>rosbag2_transport</depend>
+  <depend>rosbag2_py_backport</depend>
+  <depend>rosbag2_transport_backport</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

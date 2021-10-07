@@ -21,6 +21,8 @@
 
 #include "qos.hpp"
 
+#include "rosbag2_transport_backport/rmw_time.hpp"
+
 TEST(TestQoS, serialization)
 {
   rosbag2_transport::Rosbag2QoS expected_qos;

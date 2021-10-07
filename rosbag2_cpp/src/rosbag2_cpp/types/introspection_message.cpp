@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_cpp/types/introspection_message.hpp"
+#include "rosbag2_cpp_backport/types/introspection_message.hpp"
 
 #include <memory>
 #include <string>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_cpp)
+project(rosbag2_cpp_backport)
 
 add_definitions(-D_SRC_REINDEX_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/test/rosbag2_cpp/reindex_test_bags")
 
@@ -46,7 +46,7 @@ find_package(rcpputils REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation REQUIRED)
-find_package(rosbag2_storage REQUIRED)
+find_package(rosbag2_storage_backport REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_runtime_cpp REQUIRED)
 find_package(rosidl_typesupport_cpp REQUIRED)
@@ -68,7 +68,8 @@ add_library(${PROJECT_NAME} SHARED
   src/rosbag2_cpp/types/introspection_message.cpp
   src/rosbag2_cpp/writer.cpp
   src/rosbag2_cpp/writers/sequential_writer.cpp
-  src/rosbag2_cpp/reindexer.cpp)
+  src/rosbag2_cpp/reindexer.cpp
+  src/rosbag2_cpp/dir_iter.c)
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
@@ -79,7 +80,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rcutils
   rmw
   rmw_implementation
-  rosbag2_storage
+  rosbag2_storage_backport
   rosidl_runtime_c
   rosidl_runtime_cpp
   rosidl_typesupport_cpp
@@ -118,7 +119,7 @@ ament_export_dependencies(
   rclcpp
   rmw
   rmw_implementation
-  rosbag2_storage
+  rosbag2_storage_backport
   rosidl_runtime_c
   rosidl_runtime_cpp
   rosidl_typesupport_cpp
@@ -136,14 +137,14 @@ if(BUILD_TESTING)
     SHARED
     test/rosbag2_cpp/serializer_test_plugin.cpp
     test/rosbag2_cpp/converter_test_plugin.cpp)
-  ament_target_dependencies(converter_test_plugins rosbag2_storage)
+  ament_target_dependencies(converter_test_plugins rosbag2_storage_backport)
   target_link_libraries(converter_test_plugins ${PROJECT_NAME})
   install(
     TARGETS converter_test_plugins
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin)
-  pluginlib_export_plugin_description_file(rosbag2_cpp test/rosbag2_cpp/converter_test_plugin.xml)
+  pluginlib_export_plugin_description_file(rosbag2_cpp_backport test/rosbag2_cpp/converter_test_plugin.xml)
 
   ament_add_gmock(test_converter_factory
     test/rosbag2_cpp/test_converter_factory.cpp)
@@ -164,20 +165,20 @@ if(BUILD_TESTING)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   if(TARGET test_info)
     target_link_libraries(test_info ${PROJECT_NAME})
-    ament_target_dependencies(test_info rosbag2_test_common)
+    ament_target_dependencies(test_info rosbag2_test_common_backport)
   endif()
 
   ament_add_gmock(test_sequential_reader
     test/rosbag2_cpp/test_sequential_reader.cpp)
   if(TARGET test_sequential_reader)
-    ament_target_dependencies(test_sequential_reader rosbag2_storage)
+    ament_target_dependencies(test_sequential_reader rosbag2_storage_backport)
     target_link_libraries(test_sequential_reader ${PROJECT_NAME})
   endif()
 
   ament_add_gmock(test_storage_without_metadata_file
     test/rosbag2_cpp/test_storage_without_metadata_file.cpp)
   if(TARGET test_storage_without_metadata_file)
-    ament_target_dependencies(test_storage_without_metadata_file rosbag2_storage)
+    ament_target_dependencies(test_storage_without_metadata_file rosbag2_storage_backport)
     target_link_libraries(test_storage_without_metadata_file ${PROJECT_NAME})
   endif()
 
@@ -206,7 +207,7 @@ if(BUILD_TESTING)
     ament_target_dependencies(test_ros2_message
       ament_index_cpp
       rcpputils
-      rosbag2_storage
+      rosbag2_storage_backport
       rosidl_runtime_cpp
       rosidl_typesupport_introspection_cpp
       rosidl_typesupport_cpp
@@ -216,14 +217,14 @@ if(BUILD_TESTING)
   ament_add_gmock(test_sequential_writer
     test/rosbag2_cpp/test_sequential_writer.cpp)
   if(TARGET test_sequential_writer)
-    ament_target_dependencies(test_sequential_writer rosbag2_storage)
+    ament_target_dependencies(test_sequential_writer rosbag2_storage_backport)
     target_link_libraries(test_sequential_writer ${PROJECT_NAME})
   endif()
 
   ament_add_gmock(test_multifile_reader
     test/rosbag2_cpp/test_multifile_reader.cpp)
   if(TARGET test_multifile_reader)
-    ament_target_dependencies(test_multifile_reader rosbag2_storage)
+    ament_target_dependencies(test_multifile_reader rosbag2_storage_backport)
     target_link_libraries(test_multifile_reader ${PROJECT_NAME})
   endif()
 

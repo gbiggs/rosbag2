@@ -1,4 +1,4 @@
-<library path="rosbag2_compression_zstd">
+<library path="rosbag2_compression_zstd_backport">
   <class
     name="zstd"
     type="rosbag2_compression_zstd::ZstdCompressor"

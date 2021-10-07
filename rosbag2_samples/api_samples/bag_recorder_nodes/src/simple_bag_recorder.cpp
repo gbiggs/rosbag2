@@ -17,7 +17,7 @@
 #include "example_interfaces/msg/string.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_cpp/writer.hpp"
+#include "rosbag2_cpp_backport/writer.hpp"
 
 using std::placeholders::_1;
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_storage_default_plugins)
+project(rosbag2_storage_default_plugins_backport)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -24,7 +24,7 @@ find_package(ament_cmake REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rcpputils REQUIRED)
 find_package(rcutils REQUIRED)
-find_package(rosbag2_storage REQUIRED)
+find_package(rosbag2_storage_backport REQUIRED)
 find_package(sqlite3_vendor REQUIRED)
 find_package(SQLite3 REQUIRED)  # provided by sqlite3_vendor
 find_package(yaml_cpp_vendor REQUIRED)
@@ -36,7 +36,7 @@ add_library(${PROJECT_NAME} SHARED
 
 ament_target_dependencies(${PROJECT_NAME}
   pluginlib
-  rosbag2_storage
+  rosbag2_storage_backport
   rcpputils
   rcutils
   SQLite3
@@ -53,7 +53,7 @@ target_include_directories(${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   ROSBAG2_STORAGE_DEFAULT_PLUGINS_BUILDING_DLL)
 
-pluginlib_export_plugin_description_file(rosbag2_storage plugin_description.xml)
+pluginlib_export_plugin_description_file(rosbag2_storage_backport plugin_description.xml)
 
 install(
   DIRECTORY include/
@@ -67,12 +67,12 @@ install(
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(rosbag2_storage rcpputils rcutils sqlite3_vendor SQLite3)
+ament_export_dependencies(rosbag2_storage_backport rcpputils rcutils sqlite3_vendor SQLite3)
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(ament_lint_auto REQUIRED)
-  find_package(rosbag2_test_common REQUIRED)
+  find_package(rosbag2_test_common_backport REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
   set(TEST_LINK_LIBRARIES
@@ -88,7 +88,7 @@ if(BUILD_TESTING)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   if(TARGET test_sqlite_wrapper)
     target_link_libraries(test_sqlite_wrapper ${TEST_LINK_LIBRARIES})
-    ament_target_dependencies(test_sqlite_wrapper rosbag2_storage rosbag2_test_common)
+    ament_target_dependencies(test_sqlite_wrapper rosbag2_storage_backport rosbag2_test_common_backport)
   endif()
 
   ament_add_gmock(test_sqlite_storage
@@ -96,7 +96,7 @@ if(BUILD_TESTING)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   if(TARGET test_sqlite_storage)
     target_link_libraries(test_sqlite_storage ${TEST_LINK_LIBRARIES})
-    ament_target_dependencies(test_sqlite_storage rosbag2_storage rosbag2_test_common)
+    ament_target_dependencies(test_sqlite_storage rosbag2_storage_backport rosbag2_test_common_backport)
   endif()
 endif()
 

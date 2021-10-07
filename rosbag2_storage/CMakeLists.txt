@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_storage)
+project(rosbag2_storage_backport)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -71,7 +71,7 @@ ament_export_dependencies(pluginlib yaml_cpp_vendor)
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
-  find_package(rosbag2_test_common REQUIRED)
+  find_package(rosbag2_test_common_backport REQUIRED)
 
   ament_lint_auto_find_test_dependencies()
 
@@ -86,7 +86,7 @@ if(BUILD_TESTING)
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin)
-  pluginlib_export_plugin_description_file(rosbag2_storage test/rosbag2_storage/test_plugin.xml)
+  pluginlib_export_plugin_description_file(rosbag2_storage_backport test/rosbag2_storage/test_plugin.xml)
 
   ament_add_gmock(test_storage_factory
     test/rosbag2_storage/test_storage_factory.cpp)
@@ -107,7 +107,7 @@ if(BUILD_TESTING)
   if(TARGET test_metadata_serialization)
     target_include_directories(test_metadata_serialization PRIVATE include)
     target_link_libraries(test_metadata_serialization ${PROJECT_NAME})
-    ament_target_dependencies(test_metadata_serialization rosbag2_test_common)
+    ament_target_dependencies(test_metadata_serialization rosbag2_test_common_backport)
   endif()
 endif()
 

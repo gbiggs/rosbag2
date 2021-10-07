@@ -31,12 +31,12 @@
 #include "rcpputils/asserts.hpp"
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_cpp/readers/sequential_reader.hpp"
-#include "rosbag2_cpp/reindexer.hpp"
+#include "rosbag2_cpp_backport/readers/sequential_reader.hpp"
+#include "rosbag2_cpp_backport/reindexer.hpp"
 
-#include "rosbag2_storage/bag_metadata.hpp"
-#include "rosbag2_storage/metadata_io.hpp"
-#include "rosbag2_storage/topic_metadata.hpp"
+#include "rosbag2_storage_backport/bag_metadata.hpp"
+#include "rosbag2_storage_backport/metadata_io.hpp"
+#include "rosbag2_storage_backport/topic_metadata.hpp"
 
 using namespace testing;  // NOLINT
 

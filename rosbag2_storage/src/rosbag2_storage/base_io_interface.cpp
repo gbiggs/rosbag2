@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_storage/storage_interfaces/base_io_interface.hpp"
+#include "rosbag2_storage_backport/storage_interfaces/base_io_interface.hpp"
 
 namespace rosbag2_storage
 {

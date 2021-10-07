@@ -17,8 +17,8 @@
 #include <string>
 
 #include "rclcpp/executors/single_threaded_executor.hpp"
-#include "rosbag2_compression/sequential_compression_writer.hpp"
-#include "rosbag2_storage/serialized_bag_message.hpp"
+#include "rosbag2_compression_backport/sequential_compression_writer.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
 #include "rmw/rmw.h"
 #include "std_msgs/msg/byte_multi_array.hpp"
 

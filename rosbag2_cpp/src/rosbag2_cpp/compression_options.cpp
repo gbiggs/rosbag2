@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <string>
 
-#include "rosbag2_cpp/compression_options.hpp"
-#include "rosbag2_cpp/logging.hpp"
+#include "rosbag2_cpp_backport/compression_options.hpp"
+#include "rosbag2_cpp_backport/logging.hpp"
 
 namespace rosbag2_cpp
 {

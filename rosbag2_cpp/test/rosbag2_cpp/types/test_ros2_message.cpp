@@ -19,8 +19,8 @@
 #include <utility>
 #include <vector>
 
-#include "rosbag2_cpp/typesupport_helpers.hpp"
-#include "rosbag2_cpp/types/introspection_message.hpp"
+#include "rosbag2_cpp_backport/typesupport_helpers.hpp"
+#include "rosbag2_cpp_backport/types/introspection_message.hpp"
 
 #include "test_msgs/message_fixtures.hpp"
 #include "test_msgs/msg/arrays.hpp"

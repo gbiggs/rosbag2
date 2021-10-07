@@ -23,12 +23,12 @@
 #include "rcpputils/asserts.hpp"
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_compression/compression_options.hpp"
-#include "rosbag2_compression/sequential_compression_writer.hpp"
+#include "rosbag2_compression_backport/compression_options.hpp"
+#include "rosbag2_compression_backport/sequential_compression_writer.hpp"
 
-#include "rosbag2_cpp/writer.hpp"
+#include "rosbag2_cpp_backport/writer.hpp"
 
-#include "rosbag2_storage/storage_options.hpp"
+#include "rosbag2_storage_backport/storage_options.hpp"
 
 #include "mock_converter_factory.hpp"
 #include "mock_metadata_io.hpp"

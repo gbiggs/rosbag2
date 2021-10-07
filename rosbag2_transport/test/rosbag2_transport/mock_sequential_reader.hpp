@@ -20,7 +20,7 @@
 #include <utility>
 #include <vector>
 
-#include "rosbag2_cpp/reader_interfaces/base_reader_interface.hpp"
+#include "rosbag2_cpp_backport/reader_interfaces/base_reader_interface.hpp"
 
 class MockSequentialReader : public rosbag2_cpp::reader_interfaces::BaseReaderInterface
 {

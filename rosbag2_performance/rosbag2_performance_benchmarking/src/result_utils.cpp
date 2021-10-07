@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include "rosbag2_storage/storage_options.hpp"
-#include "rosbag2_storage/metadata_io.hpp"
+#include "rosbag2_storage_backport/storage_options.hpp"
+#include "rosbag2_storage_backport/metadata_io.hpp"
 
 #include "rosbag2_performance_benchmarking/bag_config.hpp"
 #include "rosbag2_performance_benchmarking/publisher_group_config.hpp"

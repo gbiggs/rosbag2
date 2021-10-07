@@ -17,7 +17,7 @@
 #include <memory>
 #include <string>
 
-#include "rosbag2_cpp/serialization_format_converter_factory.hpp"
+#include "rosbag2_cpp_backport/serialization_format_converter_factory.hpp"
 
 using namespace ::testing;  // NOLINT
 

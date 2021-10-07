@@ -21,8 +21,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "rosbag2_cpp/cache/message_cache.hpp"
-#include "rosbag2_storage/serialized_bag_message.hpp"
+#include "rosbag2_cpp_backport/cache/message_cache.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
 
 class MockMessageCache : public rosbag2_cpp::cache::MessageCache
 {

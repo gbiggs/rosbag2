@@ -22,7 +22,7 @@
 
 #include "rcpputils/shared_library.hpp"
 
-#include "rosbag2_cpp/typesupport_helpers.hpp"
+#include "rosbag2_cpp_backport/typesupport_helpers.hpp"
 
 using namespace ::testing;  // NOLINT
 

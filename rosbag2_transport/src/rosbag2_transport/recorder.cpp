@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_transport/recorder.hpp"
+#include "rosbag2_transport_backport/recorder.hpp"
 
 #include <algorithm>
 #include <future>
@@ -26,7 +26,7 @@
 
 #include "rclcpp/logging.hpp"
 
-#include "rosbag2_cpp/writer.hpp"
+#include "rosbag2_cpp_backport/writer.hpp"
 
 #include "qos.hpp"
 #include "topic_filter.hpp"
@@ -211,11 +211,12 @@ void Recorder::subscribe_topic(const rosbag2_storage::TopicMetadata & topic)
   }
 }
 
-std::shared_ptr<rclcpp::GenericSubscription>
+std::shared_ptr<rosbag2_transport::GenericSubscription>
 Recorder::create_subscription(
   const std::string & topic_name, const std::string & topic_type, const rclcpp::QoS & qos)
 {
   auto subscription = this->create_generic_subscription(
+    get_node_topics_interface(),
     topic_name,
     topic_type,
     qos,

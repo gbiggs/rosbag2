@@ -21,8 +21,8 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
-#include "rosbag2_compression/compression_options.hpp"
-#include "rosbag2_cpp/writers/sequential_writer.hpp"
+#include "rosbag2_compression_backport/compression_options.hpp"
+#include "rosbag2_cpp_backport/writers/sequential_writer.hpp"
 
 #include "rosbag2_performance_benchmarking/byte_producer.hpp"
 #include "rosbag2_performance_benchmarking/message_queue.hpp"

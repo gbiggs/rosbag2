@@ -18,7 +18,8 @@
 #include <utility>
 #include <vector>
 
-#include "rosbag2_transport/player.hpp"
+#include "rosbag2_transport_backport/clock_qos.hpp"
+#include "rosbag2_transport_backport/player.hpp"
 #include "rosgraph_msgs/msg/clock.hpp"
 #include "test_msgs/message_fixtures.hpp"
 
@@ -41,7 +42,7 @@ public:
   : RosBag2PlayTestFixture()
   {
     sub_->add_subscription<rosgraph_msgs::msg::Clock>(
-      "/clock", expected_clock_messages_, rclcpp::ClockQoS());
+      "/clock", expected_clock_messages_, rosbag2_transport::ClockQoS());
   }
 
   void run_test()

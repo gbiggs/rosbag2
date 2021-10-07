@@ -15,8 +15,8 @@
 #include <memory>
 #include <string>
 
-#include "rosbag2_cpp/info.hpp"
-#include "rosbag2_storage/bag_metadata.hpp"
+#include "rosbag2_cpp_backport/info.hpp"
+#include "rosbag2_storage_backport/bag_metadata.hpp"
 
 #include "./pybind11.hpp"
 

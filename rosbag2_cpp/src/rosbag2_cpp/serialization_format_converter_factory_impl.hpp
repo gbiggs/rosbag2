@@ -15,7 +15,7 @@
 #ifndef ROSBAG2_CPP__SERIALIZATION_FORMAT_CONVERTER_FACTORY_IMPL_HPP_
 #define ROSBAG2_CPP__SERIALIZATION_FORMAT_CONVERTER_FACTORY_IMPL_HPP_
 
-#include "rosbag2_cpp/serialization_format_converter_factory_interface.hpp"
+#include "rosbag2_cpp_backport/serialization_format_converter_factory_interface.hpp"
 
 #include <memory>
 #include <stdexcept>
@@ -24,9 +24,9 @@
 
 #include "pluginlib/class_loader.hpp"
 
-#include "rosbag2_cpp/converter_interfaces/serialization_format_converter.hpp"
-#include "rosbag2_cpp/logging.hpp"
-#include "rosbag2_cpp/visibility_control.hpp"
+#include "rosbag2_cpp_backport/converter_interfaces/serialization_format_converter.hpp"
+#include "rosbag2_cpp_backport/logging.hpp"
+#include "rosbag2_cpp_backport/visibility_control.hpp"
 
 #include "./rmw_implemented_serialization_format_converter.hpp"
 

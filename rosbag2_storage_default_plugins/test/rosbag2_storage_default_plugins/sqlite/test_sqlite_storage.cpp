@@ -24,7 +24,7 @@
 
 #include "rcutils/snprintf.h"
 
-#include "rosbag2_storage/storage_filter.hpp"
+#include "rosbag2_storage_backport/storage_filter.hpp"
 
 #include "storage_test_fixture.hpp"
 

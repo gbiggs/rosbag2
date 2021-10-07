@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rosbag2_cpp</name>
+  <name>rosbag2_cpp_backport</name>
   <version>0.9.1</version>
   <description>C++ ROSBag2 client library</description>
   <maintainer email="karsten@openrobotics.org">Karsten Knese</maintainer>
@@ -18,20 +18,20 @@
   <depend>rcpputils</depend>
   <depend>rmw</depend>
   <depend>rmw_implementation</depend>
-  <depend>rosbag2_storage</depend>
+  <depend>rosbag2_storage_backport</depend>
   <depend>rosidl_runtime_c</depend>
   <depend>rosidl_runtime_cpp</depend>
   <depend>rosidl_typesupport_cpp</depend>
   <depend>rosidl_typesupport_introspection_cpp</depend>
   <depend>shared_queues_vendor</depend>
 
-  <exec_depend>rosbag2_storage_default_plugins</exec_depend>
+  <exec_depend>rosbag2_storage_default_plugins_backport</exec_depend>
 
   <test_depend>ament_cmake_gmock</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>test_msgs</test_depend>
-  <test_depend>rosbag2_test_common</test_depend>
+  <test_depend>rosbag2_test_common_backport</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

@@ -25,9 +25,9 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_test_common/subscription_manager.hpp"
+#include "rosbag2_test_common_backport/subscription_manager.hpp"
 
-#include "rosbag2_transport/player.hpp"
+#include "rosbag2_transport_backport/player.hpp"
 
 #include "test_msgs/msg/basic_types.hpp"
 #include "test_msgs/message_fixtures.hpp"

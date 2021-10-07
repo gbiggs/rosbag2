@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_tests)
+project(rosbag2_tests_backport)
 
 add_definitions(-D_SRC_RESOURCES_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources")
 
@@ -33,11 +33,11 @@ if(BUILD_TESTING)
   find_package(rmw_fastrtps_cpp QUIET)
   find_package(rclcpp REQUIRED)
   find_package(rcpputils REQUIRED)
-  find_package(rosbag2_compression REQUIRED)
-  find_package(rosbag2_cpp REQUIRED)
-  find_package(rosbag2_storage REQUIRED)
-  find_package(rosbag2_storage_default_plugins REQUIRED)
-  find_package(rosbag2_test_common REQUIRED)
+  find_package(rosbag2_compression_backport REQUIRED)
+  find_package(rosbag2_cpp_backport REQUIRED)
+  find_package(rosbag2_storage_backport REQUIRED)
+  find_package(rosbag2_storage_default_plugins_backport REQUIRED)
+  find_package(rosbag2_test_common_backport REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(test_msgs REQUIRED)
 
@@ -47,11 +47,11 @@ if(BUILD_TESTING)
   if(TARGET test_rosbag2_record_end_to_end)
     ament_target_dependencies(test_rosbag2_record_end_to_end
       rclcpp
-      rosbag2_compression
-      rosbag2_compression_zstd
-      rosbag2_storage
-      rosbag2_storage_default_plugins
-      rosbag2_test_common
+      rosbag2_compression_backport
+      rosbag2_compression_zstd_backport
+      rosbag2_storage_backport
+      rosbag2_storage_default_plugins_backport
+      rosbag2_test_common_backport
       test_msgs)
     ament_add_test_label(test_rosbag2_record_end_to_end xfail)
   endif()
@@ -62,9 +62,9 @@ if(BUILD_TESTING)
   if(TARGET test_rosbag2_play_end_to_end)
     ament_target_dependencies(test_rosbag2_play_end_to_end
       rclcpp
-      rosbag2_storage
-      rosbag2_storage_default_plugins
-      rosbag2_test_common
+      rosbag2_storage_backport
+      rosbag2_storage_default_plugins_backport
+      rosbag2_test_common_backport
       test_msgs)
     ament_add_test_label(test_rosbag2_play_end_to_end xfail)
   endif()
@@ -74,8 +74,8 @@ if(BUILD_TESTING)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   if(TARGET test_rosbag2_info_end_to_end)
     ament_target_dependencies(test_rosbag2_info_end_to_end
-      rosbag2_storage
-      rosbag2_test_common)
+      rosbag2_storage_backport
+      rosbag2_test_common_backport)
     ament_add_test_label(test_rosbag2_info_end_to_end xfail)
   endif()
 
@@ -84,8 +84,8 @@ if(BUILD_TESTING)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   if(TARGET test_converter)
     ament_target_dependencies(test_converter
-      rosbag2_cpp
-      rosbag2_test_common
+      rosbag2_cpp_backport
+      rosbag2_test_common_backport
       test_msgs)
   endif()
 
@@ -94,10 +94,10 @@ if(BUILD_TESTING)
   if(TARGET test_reindex)
     ament_target_dependencies(test_reindex
       rclcpp
-      rosbag2_cpp
-      rosbag2_storage
-      rosbag2_storage_default_plugins
-      rosbag2_test_common)
+      rosbag2_cpp_backport
+      rosbag2_storage_backport
+      rosbag2_storage_default_plugins_backport
+      rosbag2_test_common_backport)
   endif()
 
 
@@ -107,10 +107,10 @@ if(BUILD_TESTING)
   if(TARGET test_rosbag2_cpp_api)
     ament_target_dependencies(test_rosbag2_cpp_api
       rclcpp
-      rosbag2_cpp
-      rosbag2_storage
-      rosbag2_storage_default_plugins
-      rosbag2_test_common
+      rosbag2_cpp_backport
+      rosbag2_storage_backport
+      rosbag2_storage_default_plugins_backport
+      rosbag2_test_common_backport
       test_msgs)
   endif()
 endif()

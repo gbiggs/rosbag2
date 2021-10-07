@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_cpp/writers/sequential_writer.hpp"
+#include "rosbag2_cpp_backport/writers/sequential_writer.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -26,9 +26,9 @@
 
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_cpp/info.hpp"
+#include "rosbag2_cpp_backport/info.hpp"
 
-#include "rosbag2_storage/storage_options.hpp"
+#include "rosbag2_storage_backport/storage_options.hpp"
 
 namespace rosbag2_cpp
 {
@@ -99,6 +99,10 @@ void SequentialWriter::open(
     converter_options.input_serialization_format)
   {
     converter_ = std::make_unique<Converter>(converter_options, converter_factory_);
+  }
+
+  if (storage_options.uri.empty()) {
+    throw std::runtime_error("Empty storage URI passed");
   }
 
   rcpputils::fs::path db_path(storage_options.uri);

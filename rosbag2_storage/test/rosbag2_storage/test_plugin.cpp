@@ -20,7 +20,7 @@
 
 #include "pluginlib/class_list_macros.hpp"
 
-#include "rosbag2_storage/serialized_bag_message.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
 
 #include "test_constants.hpp"
 #include "test_plugin.hpp"

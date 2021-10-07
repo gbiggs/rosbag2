@@ -23,12 +23,12 @@
 
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_compression_zstd/zstd_compressor.hpp"
-#include "rosbag2_compression_zstd/zstd_decompressor.hpp"
+#include "rosbag2_compression_zstd_backport/zstd_compressor.hpp"
+#include "rosbag2_compression_zstd_backport/zstd_decompressor.hpp"
 
-#include "rosbag2_storage/ros_helper.hpp"
+#include "rosbag2_storage_backport/ros_helper.hpp"
 
-#include "rosbag2_test_common/temporary_directory_fixture.hpp"
+#include "rosbag2_test_common_backport/temporary_directory_fixture.hpp"
 
 #include "gmock/gmock.h"
 

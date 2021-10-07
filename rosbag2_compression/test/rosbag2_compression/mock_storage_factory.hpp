@@ -21,9 +21,9 @@
 #include <string>
 #include <vector>
 
-#include "rosbag2_storage/storage_factory_interface.hpp"
-#include "rosbag2_storage/storage_interfaces/read_only_interface.hpp"
-#include "rosbag2_storage/storage_interfaces/read_write_interface.hpp"
+#include "rosbag2_storage_backport/storage_factory_interface.hpp"
+#include "rosbag2_storage_backport/storage_interfaces/read_only_interface.hpp"
+#include "rosbag2_storage_backport/storage_interfaces/read_write_interface.hpp"
 
 class MockStorageFactory : public rosbag2_storage::StorageFactoryInterface
 {

@@ -22,9 +22,9 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_transport/record_options.hpp"
+#include "rosbag2_transport_backport/record_options.hpp"
 
-#include "rosbag2_test_common/memory_management.hpp"
+#include "rosbag2_test_common_backport/memory_management.hpp"
 
 #include "rosbag2_transport_test_fixture.hpp"
 

@@ -26,8 +26,8 @@
 
 #include "rosbag2_storage_default_plugins/sqlite/sqlite_storage.hpp"
 
-#include "rosbag2_test_common/subscription_manager.hpp"
-#include "rosbag2_test_common/process_execution_helpers.hpp"
+#include "rosbag2_test_common_backport/subscription_manager.hpp"
+#include "rosbag2_test_common_backport/process_execution_helpers.hpp"
 
 #include "test_msgs/msg/arrays.hpp"
 #include "test_msgs/msg/basic_types.hpp"
@@ -115,7 +115,7 @@ TEST_F(PlayEndToEndTestFixture, play_fails_gracefully_if_needed_coverter_plugin_
     execute_and_wait_until_completion("ros2 bag play wrong_rmw_test", database_path_);
   auto error_output = internal::GetCapturedStderr();
 
-  EXPECT_THAT(exit_code, Eq(EXIT_FAILURE));
+  // EXPECT_THAT(exit_code, Eq(EXIT_FAILURE));  // Exit code is 0 in Foxy
   EXPECT_THAT(
     error_output, HasSubstr("Could not find converter for format wrong_format"));
 }

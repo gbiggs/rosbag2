@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_performance_benchmarking)
+project(rosbag2_performance_benchmarking_backport)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -15,9 +15,9 @@ find_package(ament_cmake REQUIRED)
 if(BUILD_ROSBAG2_BENCHMARKS)
   find_package(rclcpp REQUIRED)
   find_package(rcutils REQUIRED)
-  find_package(rosbag2_compression REQUIRED)
-  find_package(rosbag2_cpp REQUIRED)
-  find_package(rosbag2_storage REQUIRED)
+  find_package(rosbag2_compression_backport REQUIRED)
+  find_package(rosbag2_cpp_backport REQUIRED)
+  find_package(rosbag2_storage_backport REQUIRED)
   find_package(rmw REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(yaml_cpp_vendor REQUIRED)
@@ -39,22 +39,22 @@ if(BUILD_ROSBAG2_BENCHMARKS)
   ament_target_dependencies(writer_benchmark
     rclcpp
     std_msgs
-    rosbag2_compression
-    rosbag2_cpp
-    rosbag2_storage
+    rosbag2_compression_backport
+    rosbag2_cpp_backport
+    rosbag2_storage_backport
     yaml_cpp_vendor
   )
 
   ament_target_dependencies(benchmark_publishers
     rclcpp
-    rosbag2_storage
+    rosbag2_storage_backport
     std_msgs
     yaml_cpp_vendor
   )
 
   ament_target_dependencies(results_writer
     rclcpp
-    rosbag2_storage
+    rosbag2_storage_backport
   )
 
   target_include_directories(writer_benchmark

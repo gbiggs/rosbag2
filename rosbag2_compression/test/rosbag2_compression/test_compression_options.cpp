@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "rosbag2_compression/compression_options.hpp"
+#include "rosbag2_compression_backport/compression_options.hpp"
 
 TEST(CompressionOptionsFromStringTest, BadInputReturnsNoneMode)
 {

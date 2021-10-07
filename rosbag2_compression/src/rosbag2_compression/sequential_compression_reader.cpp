@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_compression/sequential_compression_reader.hpp"
+#include "rosbag2_compression_backport/sequential_compression_reader.hpp"
 
 #include <memory>
 #include <stdexcept>
@@ -23,7 +23,7 @@
 #include "rcpputils/asserts.hpp"
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_compression/compression_options.hpp"
+#include "rosbag2_compression_backport/compression_options.hpp"
 
 #include "logging.hpp"
 
@@ -67,7 +67,7 @@ void SequentialCompressionReader::preprocess_current_file()
      * Because we have no way to check whether the bag was written correctly,
      * check for the existence of the prefixed file as a fallback.
      */
-    const rcpputils::fs::path base{base_folder_};
+    rcpputils::fs::path base{base_folder_};
     const rcpputils::fs::path relative{get_current_file()};
     const auto resolved = base / relative;
     if (!resolved.exists()) {

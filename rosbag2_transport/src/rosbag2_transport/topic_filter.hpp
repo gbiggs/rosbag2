@@ -21,8 +21,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "rosbag2_cpp/typesupport_helpers.hpp"
-#include "rosbag2_transport/visibility_control.hpp"
+#include "rosbag2_cpp_backport/typesupport_helpers.hpp"
+#include "rosbag2_transport_backport/visibility_control.hpp"
 
 namespace rosbag2_transport
 {

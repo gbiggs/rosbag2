@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_storage.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_storage.hpp"
 
 #include <sys/stat.h>
 
@@ -29,11 +29,11 @@
 
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_storage/metadata_io.hpp"
-#include "rosbag2_storage/serialized_bag_message.hpp"
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_exception.hpp"
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_pragmas.hpp"
-#include "rosbag2_storage_default_plugins/sqlite/sqlite_statement_wrapper.hpp"
+#include "rosbag2_storage_backport/metadata_io.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_exception.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_pragmas.hpp"
+#include "rosbag2_storage_default_plugins_backport/sqlite/sqlite_statement_wrapper.hpp"
 
 #ifdef _WIN32
 // This is necessary because of a bug in yaml-cpp's cmake

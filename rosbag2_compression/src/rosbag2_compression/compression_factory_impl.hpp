@@ -23,7 +23,7 @@
 #include "pluginlib/class_loader.hpp"
 
 #include "logging.hpp"
-#include "rosbag2_compression/compression_factory.hpp"
+#include "rosbag2_compression_backport/compression_factory.hpp"
 
 namespace rosbag2_compression
 {
@@ -53,7 +53,7 @@ get_class_loader()
 {
   const auto lookup_name = CompressionTraits<InterfaceT>::name;
   return std::make_shared<pluginlib::ClassLoader<InterfaceT>>(
-    "rosbag2_compression", lookup_name);
+    "rosbag2_compression_backport", lookup_name);
 }
 
 template<typename InterfaceT>

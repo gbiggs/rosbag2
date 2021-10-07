@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosbag2_test_common)
+project(rosbag2_test_common_backport)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)

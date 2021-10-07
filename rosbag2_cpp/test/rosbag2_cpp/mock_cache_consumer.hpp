@@ -19,7 +19,7 @@
 #include <memory>
 
 #include "mock_message_cache.hpp"
-#include "rosbag2_cpp/cache/cache_consumer.hpp"
+#include "rosbag2_cpp_backport/cache/cache_consumer.hpp"
 
 class MockCacheConsumer : public rosbag2_cpp::cache::CacheConsumer
 {

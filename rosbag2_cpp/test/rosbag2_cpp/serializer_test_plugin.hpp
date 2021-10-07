@@ -17,7 +17,7 @@
 
 #include <memory>
 
-#include "rosbag2_cpp/converter_interfaces/serialization_format_serializer.hpp"
+#include "rosbag2_cpp_backport/converter_interfaces/serialization_format_serializer.hpp"
 
 class SerializerTestPlugin
   : public rosbag2_cpp::converter_interfaces::SerializationFormatSerializer

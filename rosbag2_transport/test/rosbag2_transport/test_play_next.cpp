@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "rosbag2_play_test_fixture.hpp"
-#include "rosbag2_transport/player.hpp"
+#include "rosbag2_transport_backport/player.hpp"
 #include "test_msgs/message_fixtures.hpp"
 #include "test_msgs/msg/arrays.hpp"
 #include "test_msgs/msg/basic_types.hpp"

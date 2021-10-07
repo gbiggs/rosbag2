@@ -32,7 +32,7 @@ if os.environ.get('ROSBAG2_PY_TEST_WITH_RTLD_GLOBAL', None) is not None:
     sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
 
 from common import get_rosbag_options  # noqa
-import rosbag2_py  # noqa
+import rosbag2_py_backport  # noqa
 
 
 def test_reindexer_multiple_files():
@@ -40,7 +40,7 @@ def test_reindexer_multiple_files():
     result_path = bag_path / 'metadata.yaml'
 
     storage_options, converter_options = get_rosbag_options(str(bag_path))
-    reindexer = rosbag2_py.Reindexer()
+    reindexer = rosbag2_py_backport.Reindexer()
     reindexer.reindex(storage_options)
 
     assert(result_path.exists())

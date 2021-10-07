@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-package_name = 'ros2bag'
+package_name = 'ros2bag_backport'
 
 setup(
     name=package_name,
@@ -32,17 +32,17 @@ The package provides the rosbag command for the ROS 2 command line tools.""",
     tests_require=['pytest'],
     entry_points={
         'ros2cli.command': [
-            'bag = ros2bag.command.bag:BagCommand',
+            'bag_bp = ros2bag_backport.command.bag:BagCommand',
         ],
         'ros2cli.extension_point': [
-            'ros2bag.verb = ros2bag.verb:VerbExtension',
+            'ros2bag_backport.verb = ros2bag_backport.verb:VerbExtension',
         ],
-        'ros2bag.verb': [
-            'info = ros2bag.verb.info:InfoVerb',
-            'list = ros2bag.verb.list:ListVerb',
-            'play = ros2bag.verb.play:PlayVerb',
-            'record = ros2bag.verb.record:RecordVerb',
-            'reindex = ros2bag.verb.reindex:ReindexVerb'
+        'ros2bag_backport.verb': [
+            'info = ros2bag_backport.verb.info:InfoVerb',
+            'list = ros2bag_backport.verb.list:ListVerb',
+            'play = ros2bag_backport.verb.play:PlayVerb',
+            'record = ros2bag_backport.verb.record:RecordVerb',
+            'reindex = ros2bag_backport.verb.reindex:ReindexVerb'
         ],
     }
 )

@@ -17,8 +17,8 @@
 
 #include <string>
 
-#include "rosbag2_compression/base_compressor_interface.hpp"
-#include "rosbag2_storage/serialized_bag_message.hpp"
+#include "rosbag2_compression_backport/base_compressor_interface.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
 
 class FakeCompressor : public rosbag2_compression::BaseCompressorInterface
 {

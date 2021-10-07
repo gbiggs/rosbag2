@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_compression/sequential_compression_writer.hpp"
+#include "rosbag2_compression_backport/sequential_compression_writer.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -27,10 +27,10 @@
 
 #include "rcutils/filesystem.h"
 
-#include "rosbag2_cpp/info.hpp"
+#include "rosbag2_cpp_backport/info.hpp"
 
-#include "rosbag2_storage/storage_options.hpp"
-#include "rosbag2_storage/storage_interfaces/read_write_interface.hpp"
+#include "rosbag2_storage_backport/storage_options.hpp"
+#include "rosbag2_storage_backport/storage_interfaces/read_write_interface.hpp"
 
 #include "logging.hpp"
 

@@ -19,11 +19,11 @@
 
 #include "rcutils/strdup.h"
 
-#include "rosbag2_cpp/serialization_format_converter_factory.hpp"
-#include "rosbag2_cpp/typesupport_helpers.hpp"
-#include "rosbag2_cpp/types.hpp"
+#include "rosbag2_cpp_backport/serialization_format_converter_factory.hpp"
+#include "rosbag2_cpp_backport/typesupport_helpers.hpp"
+#include "rosbag2_cpp_backport/types.hpp"
 
-#include "rosbag2_test_common/memory_management.hpp"
+#include "rosbag2_test_common_backport/memory_management.hpp"
 
 #include "test_msgs/message_fixtures.hpp"
 

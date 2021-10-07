@@ -23,9 +23,9 @@
 #include "rcpputils/asserts.hpp"
 #include "rcpputils/filesystem_helper.hpp"
 
-#include "rosbag2_compression/sequential_compression_reader.hpp"
+#include "rosbag2_compression_backport/sequential_compression_reader.hpp"
 
-#include "rosbag2_cpp/reader.hpp"
+#include "rosbag2_cpp_backport/reader.hpp"
 
 #include "mock_converter_factory.hpp"
 #include "mock_metadata_io.hpp"

@@ -25,9 +25,9 @@
 # include <Windows.h>
 #endif
 
-#include "rosbag2_storage/bag_metadata.hpp"
-#include "rosbag2_storage/metadata_io.hpp"
-#include "rosbag2_test_common/temporary_directory_fixture.hpp"
+#include "rosbag2_storage_backport/bag_metadata.hpp"
+#include "rosbag2_storage_backport/metadata_io.hpp"
+#include "rosbag2_test_common_backport/temporary_directory_fixture.hpp"
 
 using namespace ::testing;  // NOLINT
 using namespace rosbag2_storage;  // NOLINT

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rosbag2_interfaces)
+project(rosbag2_interfaces_backport)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)

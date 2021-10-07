@@ -22,7 +22,7 @@
 #include "rcpputils/filesystem_helper.hpp"
 
 #include "compression_utils.hpp"
-#include "rosbag2_compression_zstd/zstd_decompressor.hpp"
+#include "rosbag2_compression_zstd_backport/zstd_decompressor.hpp"
 
 namespace rosbag2_compression_zstd
 {

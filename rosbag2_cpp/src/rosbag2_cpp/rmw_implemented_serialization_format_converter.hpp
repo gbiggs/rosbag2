@@ -18,7 +18,7 @@
 #include <memory>
 #include <string>
 
-#include "rosbag2_cpp/converter_interfaces/serialization_format_converter.hpp"
+#include "rosbag2_cpp_backport/converter_interfaces/serialization_format_converter.hpp"
 
 namespace rosbag2_cpp
 {

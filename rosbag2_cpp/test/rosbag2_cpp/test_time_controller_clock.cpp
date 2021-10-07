@@ -17,7 +17,7 @@
 #include <atomic>
 #include <thread>
 
-#include "rosbag2_cpp/clocks/time_controller_clock.hpp"
+#include "rosbag2_cpp_backport/clocks/time_controller_clock.hpp"
 
 using namespace testing;  // NOLINT
 using SteadyTimePoint = std::chrono::steady_clock::time_point;

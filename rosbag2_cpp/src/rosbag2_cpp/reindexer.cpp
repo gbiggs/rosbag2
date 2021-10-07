@@ -35,11 +35,12 @@
 
 #include "rcutils/filesystem.h"
 
-#include "rosbag2_cpp/logging.hpp"
-#include "rosbag2_cpp/reader.hpp"
-#include "rosbag2_cpp/reindexer.hpp"
+#include "rosbag2_cpp_backport/logging.hpp"
+#include "rosbag2_cpp_backport/reader.hpp"
+#include "rosbag2_cpp_backport/reindexer.hpp"
+#include "rosbag2_cpp_backport/dir_iter.h"
 
-#include "rosbag2_storage/storage_options.hpp"
+#include "rosbag2_storage_backport/storage_options.hpp"
 
 namespace rosbag2_cpp
 {
@@ -99,12 +100,12 @@ bool Reindexer::compare_relative_file(
  *    The files will be `emplace_back`-ed on the passed vector
  */
 void Reindexer::get_bag_files(
-  const rcpputils::fs::path & base_folder,
+  rcpputils::fs::path & base_folder,
   std::vector<rcpputils::fs::path> & output)
 {
   std::regex regex_rule(regex_bag_pattern_, std::regex_constants::ECMAScript);
   auto allocator = rcutils_get_default_allocator();
-  auto dir_iter = rcutils_dir_iter_start(base_folder.string().c_str(), allocator);
+  auto dir_iter = rosbag2_cpp_dir_iter_start(base_folder.string().c_str(), allocator);
 
   // Make sure there are files in the directory
   if (dir_iter == nullptr) {
@@ -120,7 +121,7 @@ void Reindexer::get_bag_files(
       auto full_path = base_folder / found_file;
       output.emplace_back(full_path);
     }
-  } while (rcutils_dir_iter_next(dir_iter));
+  } while (rosbag2_cpp_dir_iter_next(dir_iter));
 
   // Sort relative file path by database number
   std::sort(

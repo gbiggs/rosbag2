@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rosbag2_cpp/serialization_format_converter_factory.hpp"
+#include "rosbag2_cpp_backport/serialization_format_converter_factory.hpp"
 
 #include <memory>
 #include <string>
