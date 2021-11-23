@@ -33,6 +33,7 @@
 #include "rosbag2_interfaces_backport/srv/get_rate.hpp"
 #include "rosbag2_interfaces_backport/srv/is_paused.hpp"
 #include "rosbag2_interfaces_backport/srv/pause.hpp"
+#include "rosbag2_interfaces_backport/srv/play_for.hpp"
 #include "rosbag2_interfaces_backport/srv/play_next.hpp"
 #include "rosbag2_interfaces_backport/srv/resume.hpp"
 #include "rosbag2_interfaces_backport/srv/set_rate.hpp"
@@ -125,6 +126,9 @@ public:
   ROSBAG2_TRANSPORT_PUBLIC
   bool play_next();
 
+  ROSBAG2_TRANSPORT_PUBLIC
+  void play_for(rcutils_duration_value_t duration);
+
 protected:
   std::atomic<bool> playing_messages_from_queue_{false};
   rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_publisher_;
@@ -137,8 +141,10 @@ private:
   void enqueue_up_to_boundary(uint64_t boundary);
   void wait_for_filled_queue() const;
   void play_messages_from_queue();
+  void play_messages_from_queue(rcutils_duration_value_t play_until_time);
   void prepare_publishers();
   bool publish_message(rosbag2_storage::SerializedBagMessageSharedPtr message);
+  void do_play(rcutils_duration_value_t duration);
   static constexpr double read_ahead_lower_bound_percentage_ = 0.9;
   static const std::chrono::milliseconds queue_read_wait_period_;
 
@@ -162,6 +168,7 @@ private:
   rclcpp::Service<rosbag2_interfaces_backport::srv::GetRate>::SharedPtr srv_get_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::SetRate>::SharedPtr srv_set_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayNext>::SharedPtr srv_play_next_;
+  rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_;
 
   template<typename AllocatorT = std::allocator<void>>
   std::shared_ptr<GenericPublisher> create_generic_publisher(
