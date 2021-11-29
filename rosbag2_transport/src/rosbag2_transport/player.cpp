@@ -191,10 +191,11 @@ Player::Player(
       const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayFor::Request> request,
       const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayFor::Response> response)
     {
-      play_for(
-        static_cast<rcutils_duration_value_t>(request->duration.sec) *
-        static_cast<rcutils_duration_value_t>(1000000000) +
-        static_cast<rcutils_duration_value_t>(request->duration.nanosec));
+      const rcutils_duration_value_t duration =
+      static_cast<rcutils_duration_value_t>(request->duration.sec) *
+      static_cast<rcutils_duration_value_t>(1000000000) +
+      static_cast<rcutils_duration_value_t>(request->duration.nanosec);
+      play({duration});
       response->success = true;
     });
 }
@@ -225,17 +226,7 @@ bool Player::is_storage_completely_loaded() const
   return !storage_loading_future_.valid();
 }
 
-void Player::play()
-{
-  do_play(-1);
-}
-
-void Player::play_for(rcutils_duration_value_t duration)
-{
-  do_play(duration);
-}
-
-void Player::do_play(rcutils_duration_value_t duration)
+void Player::play(const std::optional<rcutils_duration_value_t> & duration)
 {
   is_in_play_ = true;
 
@@ -261,8 +252,10 @@ void Player::do_play(rcutils_duration_value_t duration)
       const auto starting_time = std::chrono::duration_cast<std::chrono::nanoseconds>(
         reader_->get_metadata().starting_time.time_since_epoch()).count();
 
-      const rcutils_time_point_value_t play_until_time = duration <=
-        0 ? -1 : starting_time + duration;
+      std::optional<rcutils_time_point_value_t> play_until_time{};
+      if (duration.has_value() && *duration > 0) {
+        play_until_time = {starting_time + *duration};
+      }
 
       clock_->jump(starting_time);
 
@@ -271,7 +264,7 @@ void Player::do_play(rcutils_duration_value_t duration)
         [this]() {load_storage_content();});
 
       wait_for_filled_queue();
-      play_messages_from_queue(play_until_time);
+      play_messages_from_queue({play_until_time});
       reader_->close();
     } while (rclcpp::ok() && play_options_.loop);
   } catch (std::runtime_error & e) {
@@ -388,7 +381,8 @@ void Player::enqueue_up_to_boundary(uint64_t boundary)
   }
 }
 
-void Player::play_messages_from_queue()
+void Player::play_messages_from_queue(
+  const std::optional<rcutils_duration_value_t> & play_until_time)
 {
   playing_messages_from_queue_ = true;
   // Note: We need to use message_queue_.peek() instead of message_queue_.try_dequeue(message)
@@ -398,44 +392,11 @@ void Player::play_messages_from_queue()
     {
       rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
       // Do not move on until sleep_until returns true
-      // It will always sleep, so this is not a tight busy loop on pause
-      while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {}
-      if (rclcpp::ok()) {
-        {
-          std::lock_guard<std::mutex> lk(skip_message_in_main_play_loop_mutex_);
-          if (skip_message_in_main_play_loop_) {
-            skip_message_in_main_play_loop_ = false;
-            message_ptr = peek_next_message_from_queue();
-            continue;
-          }
-        }
-        publish_message(message);
-      }
-      message_queue_.pop();
-      message_ptr = peek_next_message_from_queue();
-    }
-  }
-  playing_messages_from_queue_ = false;
-}
-
-void Player::play_messages_from_queue(rcutils_duration_value_t play_until_time)
-{
-  playing_messages_from_queue_ = true;
-  // Note: We need to use message_queue_.peek() instead of message_queue_.try_dequeue(message)
-  // to support play_next() API logic.
-  rosbag2_storage::SerializedBagMessageSharedPtr * message_ptr = peek_next_message_from_queue();
-  while (message_ptr != nullptr && rclcpp::ok()) {
-    {
-      rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
-      // Do not move on until sleep_until returns true
-      // It will always sleep, so this is not a tight busy loop on pause
-      if ((play_until_time > 0 && message->time_stamp < play_until_time) ||
-        (play_until_time <= 0))
-      {
-        while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {}
-      } else {
+      // It will always sleep, so this is not a tight busy loop on pause.
+      if (play_until_time.has_value() && message->time_stamp > play_until_time) {
         break;
       }
+      while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {}
       if (rclcpp::ok()) {
         {
           std::lock_guard<std::mutex> lk(skip_message_in_main_play_loop_mutex_);

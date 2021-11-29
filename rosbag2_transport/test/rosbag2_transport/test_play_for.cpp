@@ -103,7 +103,7 @@ TEST_F(RosBag2PlayForTestFixture, play_for_recorded_messages_are_played_for_all_
 {
   auto await_received_messages = sub_->spin_subscriptions();
 
-  player_->play_for(std::chrono::nanoseconds(std::chrono::milliseconds(1000)).count());
+  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(1000)).count());
 
   await_received_messages.get();
 
@@ -140,7 +140,7 @@ TEST_F(RosBag2PlayForTestFixture, play_for_none_are_played_due_to_duration)
 
   auto await_received_messages = sub_->spin_subscriptions_for(duration);
 
-  player_->play_for(duration);
+  player_->play(duration);
 
   await_received_messages.get();
 

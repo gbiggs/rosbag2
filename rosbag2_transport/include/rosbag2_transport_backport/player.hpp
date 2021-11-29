@@ -18,6 +18,7 @@
 #include <chrono>
 #include <future>
 #include <memory>
+#include <optional> // NOLINT  -- cpplint complains about the inclusion order.
 #include <queue>
 #include <string>
 #include <unordered_map>
@@ -82,7 +83,7 @@ public:
   virtual ~Player();
 
   ROSBAG2_TRANSPORT_PUBLIC
-  void play();
+  void play(const std::optional<rcutils_duration_value_t> & duration = std::nullopt);
 
   ROSBAG2_TRANSPORT_PUBLIC
   rosbag2_cpp::Reader * release_reader();
@@ -126,9 +127,6 @@ public:
   ROSBAG2_TRANSPORT_PUBLIC
   bool play_next();
 
-  ROSBAG2_TRANSPORT_PUBLIC
-  void play_for(rcutils_duration_value_t duration);
-
 protected:
   std::atomic<bool> playing_messages_from_queue_{false};
   rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_publisher_;
@@ -140,11 +138,9 @@ private:
   bool is_storage_completely_loaded() const;
   void enqueue_up_to_boundary(uint64_t boundary);
   void wait_for_filled_queue() const;
-  void play_messages_from_queue();
-  void play_messages_from_queue(rcutils_duration_value_t play_until_time);
+  void play_messages_from_queue(const std::optional<rcutils_duration_value_t> & play_until_time);
   void prepare_publishers();
   bool publish_message(rosbag2_storage::SerializedBagMessageSharedPtr message);
-  void do_play(rcutils_duration_value_t duration);
   static constexpr double read_ahead_lower_bound_percentage_ = 0.9;
   static const std::chrono::milliseconds queue_read_wait_period_;
 
