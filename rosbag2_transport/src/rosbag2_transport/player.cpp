@@ -393,7 +393,7 @@ void Player::play_messages_from_queue(
       rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
       // Do not move on until sleep_until returns true
       // It will always sleep, so this is not a tight busy loop on pause.
-      if (play_until_time.has_value() && message->time_stamp > play_until_time) {
+      if (play_until_time.has_value() && message->time_stamp > *play_until_time) {
         break;
       }
       while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {}
