@@ -79,7 +79,6 @@ public:
     return messages;
   }
 
-protected:
   void SetUp() override
   {
     auto topic_types = get_topic_types();
@@ -150,11 +149,11 @@ TEST_F(RosBag2PlayForTestFixture, play_for_none_are_played_due_to_duration)
 
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
-  EXPECT_THAT(replayed_test_primitives, SizeIs(Le(0u)));
+  EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(0u)));
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
     kTopic2);
-  EXPECT_THAT(replayed_test_arrays, SizeIs(Le(0u)));
+  EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(0u)));
 }
 
 TEST_F(RosBag2PlayForTestFixture, play_for_less_than_the_total_duration)
@@ -171,8 +170,124 @@ TEST_F(RosBag2PlayForTestFixture, play_for_less_than_the_total_duration)
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
   EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(2u)));
+  EXPECT_THAT(
+    replayed_test_primitives,
+    Each(Pointee(Field(&test_msgs::msg::BasicTypes::int32_value, 42))));
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
     kTopic2);
   EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(2u)));
+  EXPECT_THAT(
+    replayed_test_arrays,
+    Each(
+      Pointee(
+        Field(
+          &test_msgs::msg::Arrays::bool_values,
+          ElementsAre(true, false, true)))));
+  EXPECT_THAT(
+    replayed_test_arrays,
+    Each(
+      Pointee(
+        Field(
+          &test_msgs::msg::Arrays::float32_values,
+          ElementsAre(40.0f, 2.0f, 0.0f)))));
+}
+
+class RosBag2PlayForFilteredTopicTestFixture : public RosBag2PlayForTestFixture
+{
+public:
+  void SetUp() override
+  {
+    // Filter allows /topic2, blocks /topic1
+    play_options_.topics_to_filter = {"topic2"};
+    RosBag2PlayForTestFixture::SetUp();
+  }
+};
+
+TEST_F(
+  RosBag2PlayForFilteredTopicTestFixture,
+  play_for_full_duration_recorded_messages_with_filtered_topics)
+{
+  auto await_received_messages = sub_->spin_subscriptions();
+
+  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(1000)).count());
+
+  await_received_messages.get();
+
+  auto replayed_test_primitives =
+    sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
+  // No messages are allowed to have arrived
+  EXPECT_THAT(replayed_test_primitives, SizeIs(0u));
+
+  auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
+  // All messages should have arrived.
+  EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(3u)));
+  EXPECT_THAT(
+    replayed_test_arrays,
+    Each(
+      Pointee(
+        Field(
+          &test_msgs::msg::Arrays::bool_values,
+          ElementsAre(true, false, true)))));
+  EXPECT_THAT(
+    replayed_test_arrays,
+    Each(
+      Pointee(
+        Field(
+          &test_msgs::msg::Arrays::float32_values,
+          ElementsAre(40.0f, 2.0f, 0.0f)))));
+}
+
+TEST_F(
+  RosBag2PlayForFilteredTopicTestFixture,
+  play_for_short_duration_recorded_messages_with_filtered_topics)
+{
+  auto await_received_messages = sub_->spin_subscriptions();
+
+  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(300)).count());
+
+  await_received_messages.get();
+
+  auto replayed_test_primitives =
+    sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
+  // No messages are allowed to have arrived
+  EXPECT_THAT(replayed_test_primitives, SizeIs(0u));
+
+  auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
+  // All messages should have arrived.
+  EXPECT_THAT(replayed_test_arrays, SizeIs(0u));
+}
+
+TEST_F(
+  RosBag2PlayForFilteredTopicTestFixture,
+  play_for_intermediate_duration_recorded_messages_with_filtered_topics)
+{
+  auto await_received_messages = sub_->spin_subscriptions();
+
+  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(850)).count());
+
+  await_received_messages.get();
+
+  auto replayed_test_primitives =
+    sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
+  // No messages are allowed to have arrived
+  EXPECT_THAT(replayed_test_primitives, SizeIs(0u));
+
+  auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
+  // Some messages should have arrived.
+  EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(2u)));
+  EXPECT_THAT(
+    replayed_test_arrays,
+    Each(
+      Pointee(
+        Field(
+          &test_msgs::msg::Arrays::bool_values,
+          ElementsAre(true, false, true)))));
+  EXPECT_THAT(
+    replayed_test_arrays,
+    Each(
+      Pointee(
+        Field(
+          &test_msgs::msg::Arrays::float32_values,
+          ElementsAre(40.0f, 2.0f, 0.0f)))));
 }
