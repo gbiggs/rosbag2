@@ -85,6 +85,10 @@ class PlayVerb(VerbExtension):
         parser.add_argument(
             '-d', '--delay', type=float, default=0.0,
             help='Sleep SEC seconds before play. Valid range > 0.0')
+        parser.add_argument(
+            '-f', '--duration', type=float, default=None,
+            help='Play for SEC seconds. Default is None, meaning that it will not play based on '
+                 'time. Valid range > 0.0')
 
     def main(self, *, args):  # noqa: D102
         qos_profile_overrides = {}  # Specify a valid default
@@ -121,5 +125,9 @@ class PlayVerb(VerbExtension):
         play_options.clock_publish_frequency = args.clock
         play_options.delay = args.delay
 
+        # Gets the duration in nanoseconds when a value is provided for player
+        # consumption.
+        duration = int(args.duration * 1e9) if args.duration else args.duration
+
         player = Player()
-        player.play(storage_options, play_options)
+        player.play(storage_options, play_options, duration)
