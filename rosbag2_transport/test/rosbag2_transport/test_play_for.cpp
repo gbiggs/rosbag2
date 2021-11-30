@@ -65,13 +65,17 @@ public:
     complex_message1->float32_values = {{40.0f, 2.0f, 0.0f}};
     complex_message1->bool_values = {{true, false, true}};
 
+    // @{ Ordering matters. The mock reader implementation moves messages
+    //    around without any knowledge about message chronology. It just picks
+    //    the next one Make sure to keep the list in order or sort it!
     std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
     {serialize_test_message(kTopic1Name, 500, primitive_message1),
-      serialize_test_message(kTopic1Name, 700, primitive_message1),
-      serialize_test_message(kTopic1Name, 900, primitive_message1),
       serialize_test_message(kTopic2Name, 550, complex_message1),
+      serialize_test_message(kTopic1Name, 700, primitive_message1),
       serialize_test_message(kTopic2Name, 750, complex_message1),
+      serialize_test_message(kTopic1Name, 900, primitive_message1),
       serialize_test_message(kTopic2Name, 950, complex_message1)};
+    // @}
     return messages;
   }
 
@@ -151,4 +155,24 @@ TEST_F(RosBag2PlayForTestFixture, play_for_none_are_played_due_to_duration)
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
     kTopic2);
   EXPECT_THAT(replayed_test_arrays, SizeIs(Le(0u)));
+}
+
+TEST_F(RosBag2PlayForTestFixture, play_for_less_than_the_total_duration)
+{
+  const rcutils_duration_value_t duration =
+    std::chrono::nanoseconds(std::chrono::milliseconds(800)).count();
+
+  auto await_received_messages = sub_->spin_subscriptions_for(duration);
+
+  player_->play(duration);
+
+  await_received_messages.get();
+
+  auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
+    kTopic1);
+  EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(2u)));
+
+  auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
+    kTopic2);
+  EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(2u)));
 }
