@@ -41,6 +41,40 @@ using namespace rosbag2_transport;  // NOLINT
 using namespace std::chrono_literals;  // NOLINT
 using namespace rosbag2_test_common;  // NOLINT
 
+
+constexpr int kIntValue{32};
+
+constexpr float kFloat1Value{40.};
+constexpr float kFloat2Value{2.};
+constexpr float kFloat3Value{0.};
+
+constexpr bool kBool1Value{false};
+constexpr bool kBool2Value{true};
+constexpr bool kBool3Value{false};
+
+#define EVAL_REPLAYED_PRIMITIVES(replayed_primitives) \
+  EXPECT_THAT( \
+    replayed_primitives, \
+    Each(Pointee(Field(&test_msgs::msg::BasicTypes::int32_value, kIntValue))))
+
+#define EVAL_REPLAYED_FLOAT_ARRAY_PRIMITIVES(replayed_float_array_primitive) \
+  EXPECT_THAT( \
+    replayed_float_array_primitive, \
+    Each( \
+      Pointee( \
+        Field( \
+          &test_msgs::msg::Arrays::float32_values, \
+          ElementsAre(kFloat1Value, kFloat2Value, kFloat3Value)))))
+
+#define EVAL_REPLAYED_BOOL_ARRAY_PRIMITIVES(replayed_bool_array_primitive) \
+  EXPECT_THAT( \
+    replayed_bool_array_primitive, \
+    Each( \
+      Pointee( \
+        Field( \
+          &test_msgs::msg::Arrays::bool_values, \
+          ElementsAre(kBool1Value, kBool2Value, kBool3Value)))))
+
 class RosBag2PlayForTestFixture : public RosBag2PlayTestFixture
 {
 public:
@@ -59,11 +93,11 @@ public:
   get_serialized_messages()
   {
     auto primitive_message1 = get_messages_basic_types()[0];
-    primitive_message1->int32_value = 42;
+    primitive_message1->int32_value = kIntValue;
 
     auto complex_message1 = get_messages_arrays()[0];
-    complex_message1->float32_values = {{40.0f, 2.0f, 0.0f}};
-    complex_message1->bool_values = {{true, false, true}};
+    complex_message1->float32_values = {{kFloat1Value, kFloat2Value, kFloat3Value}};
+    complex_message1->bool_values = {{kBool1Value, kBool2Value, kBool3Value}};
 
     // @{ Ordering matters. The mock reader implementation moves messages
     //    around without any knowledge about message chronology. It just picks
@@ -113,27 +147,13 @@ TEST_F(RosBag2PlayForTestFixture, play_for_recorded_messages_are_played_for_all_
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
   EXPECT_THAT(replayed_test_primitives, SizeIs(Ge(2u)));
-  EXPECT_THAT(
-    replayed_test_primitives,
-    Each(Pointee(Field(&test_msgs::msg::BasicTypes::int32_value, 42))));
+  EVAL_REPLAYED_PRIMITIVES(replayed_test_primitives);
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
     kTopic2);
   EXPECT_THAT(replayed_test_arrays, SizeIs(Ge(2u)));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::bool_values,
-          ElementsAre(true, false, true)))));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::float32_values,
-          ElementsAre(40.0f, 2.0f, 0.0f)))));
+  EVAL_REPLAYED_BOOL_ARRAY_PRIMITIVES(replayed_test_arrays);
+  EVAL_REPLAYED_FLOAT_ARRAY_PRIMITIVES(replayed_test_arrays);
 }
 
 TEST_F(RosBag2PlayForTestFixture, play_for_none_are_played_due_to_duration)
@@ -170,27 +190,13 @@ TEST_F(RosBag2PlayForTestFixture, play_for_less_than_the_total_duration)
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
   EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(2u)));
-  EXPECT_THAT(
-    replayed_test_primitives,
-    Each(Pointee(Field(&test_msgs::msg::BasicTypes::int32_value, 42))));
+  EVAL_REPLAYED_PRIMITIVES(replayed_test_primitives);
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
     kTopic2);
   EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(2u)));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::bool_values,
-          ElementsAre(true, false, true)))));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::float32_values,
-          ElementsAre(40.0f, 2.0f, 0.0f)))));
+  EVAL_REPLAYED_BOOL_ARRAY_PRIMITIVES(replayed_test_arrays);
+  EVAL_REPLAYED_FLOAT_ARRAY_PRIMITIVES(replayed_test_arrays);
 }
 
 class RosBag2PlayForFilteredTopicTestFixture : public RosBag2PlayForTestFixture
@@ -222,20 +228,8 @@ TEST_F(
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
   // All messages should have arrived.
   EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(3u)));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::bool_values,
-          ElementsAre(true, false, true)))));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::float32_values,
-          ElementsAre(40.0f, 2.0f, 0.0f)))));
+  EVAL_REPLAYED_BOOL_ARRAY_PRIMITIVES(replayed_test_arrays);
+  EVAL_REPLAYED_FLOAT_ARRAY_PRIMITIVES(replayed_test_arrays);
 }
 
 TEST_F(
@@ -264,7 +258,7 @@ TEST_F(
 {
   auto await_received_messages = sub_->spin_subscriptions();
 
-  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(850)).count());
+  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(800)).count());
 
   await_received_messages.get();
 
@@ -276,18 +270,6 @@ TEST_F(
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
   // Some messages should have arrived.
   EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(2u)));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::bool_values,
-          ElementsAre(true, false, true)))));
-  EXPECT_THAT(
-    replayed_test_arrays,
-    Each(
-      Pointee(
-        Field(
-          &test_msgs::msg::Arrays::float32_values,
-          ElementsAre(40.0f, 2.0f, 0.0f)))));
+  EVAL_REPLAYED_BOOL_ARRAY_PRIMITIVES(replayed_test_arrays);
+  EVAL_REPLAYED_FLOAT_ARRAY_PRIMITIVES(replayed_test_arrays);
 }
