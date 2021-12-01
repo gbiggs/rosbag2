@@ -198,6 +198,20 @@ Player::Player(
       play({duration});
       response->success = true;
     });
+  srv_play_until_ = create_service<rosbag2_interfaces_backport::srv::PlayUntil>(
+    "~/play_until",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayUntil::Request> request,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayUntil::Response> response)
+    {
+      const rcutils_time_point_value_t timestamp =
+      static_cast<rcutils_time_point_value_t>(request->time.sec) *
+      static_cast<rcutils_time_point_value_t>(1000000000) +
+      static_cast<rcutils_time_point_value_t>(request->time.nanosec);
+      play_until(timestamp);
+      response->success = true;
+    });
 }
 
 Player::~Player()

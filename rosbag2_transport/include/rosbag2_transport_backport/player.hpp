@@ -36,6 +36,7 @@
 #include "rosbag2_interfaces_backport/srv/pause.hpp"
 #include "rosbag2_interfaces_backport/srv/play_for.hpp"
 #include "rosbag2_interfaces_backport/srv/play_next.hpp"
+#include "rosbag2_interfaces_backport/srv/play_until.hpp"
 #include "rosbag2_interfaces_backport/srv/resume.hpp"
 #include "rosbag2_interfaces_backport/srv/set_rate.hpp"
 #include "rosbag2_interfaces_backport/srv/toggle_paused.hpp"
@@ -172,6 +173,7 @@ private:
   rclcpp::Service<rosbag2_interfaces_backport::srv::SetRate>::SharedPtr srv_set_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayNext>::SharedPtr srv_play_next_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_;
+  rclcpp::Service<rosbag2_interfaces_backport::srv::PlayUntil>::SharedPtr srv_play_until_;
 
   template<typename AllocatorT = std::allocator<void>>
   std::shared_ptr<GenericPublisher> create_generic_publisher(
