@@ -87,8 +87,8 @@ class PlayVerb(VerbExtension):
             help='Sleep SEC seconds before play. Valid range > 0.0')
         parser.add_argument(
             '-f', '--duration', type=float, default=None,
-            help='Play for SEC seconds. Default is None, meaning that it will not play based on '
-                 'time. Valid range > 0.0')
+            help='Play for SEC seconds. Default is None, meaning that playback will continue '
+                 'until the end of the bag. Valid range > 0.0')
 
     def main(self, *, args):  # noqa: D102
         qos_profile_overrides = {}  # Specify a valid default
