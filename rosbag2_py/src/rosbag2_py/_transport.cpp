@@ -104,26 +104,10 @@ public:
 
   void play(
     const rosbag2_storage::StorageOptions & storage_options,
-    PlayOptions & play_options)
+    PlayOptions & play_options,
+    const std::optional<rcutils_duration_value_t> & duration)
   {
-    std::unique_ptr<rosbag2_cpp::Reader> reader = nullptr;
-    // Determine whether to build compression or regular reader
-    {
-      rosbag2_storage::MetadataIo metadata_io{};
-      rosbag2_storage::BagMetadata metadata{};
-      if (metadata_io.metadata_file_exists(storage_options.uri)) {
-        metadata = metadata_io.read_metadata(storage_options.uri);
-        if (!metadata.compression_format.empty()) {
-          reader = std::make_unique<rosbag2_cpp::Reader>(
-            std::make_unique<rosbag2_compression::SequentialCompressionReader>());
-        }
-      }
-      if (reader == nullptr) {
-        reader = std::make_unique<rosbag2_cpp::Reader>(
-          std::make_unique<rosbag2_cpp::readers::SequentialReader>());
-      }
-    }
-
+    auto reader = MakeReader(storage_options);
     auto player = std::make_shared<rosbag2_transport::Player>(
       std::move(reader), storage_options, play_options);
 
@@ -133,10 +117,53 @@ public:
       [&exec]() {
         exec.spin();
       });
-    player->play();
+    player->play(duration);
 
     exec.cancel();
     spin_thread.join();
+  }
+
+  void play_until(
+    const rosbag2_storage::StorageOptions & storage_options,
+    PlayOptions & play_options,
+    const rcutils_time_point_value_t & timestamp)
+  {
+    auto reader = MakeReader(storage_options);
+    auto player = std::make_shared<rosbag2_transport::Player>(
+      std::move(reader), storage_options, play_options);
+
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(player);
+    auto spin_thread = std::thread(
+      [&exec]() {
+        exec.spin();
+      });
+    player->play_until(timestamp);
+
+    exec.cancel();
+    spin_thread.join();
+  }
+
+private:
+  std::unique_ptr<rosbag2_cpp::Reader> MakeReader(
+    const rosbag2_storage::StorageOptions & storage_options)
+  {
+    // Determine whether to build compression or regular reader
+    rosbag2_storage::MetadataIo metadata_io{};
+    rosbag2_storage::BagMetadata metadata{};
+    std::unique_ptr<rosbag2_cpp::Reader> reader{};
+    if (metadata_io.metadata_file_exists(storage_options.uri)) {
+      metadata = metadata_io.read_metadata(storage_options.uri);
+      if (!metadata.compression_format.empty()) {
+        reader = std::make_unique<rosbag2_cpp::Reader>(
+          std::make_unique<rosbag2_compression::SequentialCompressionReader>());
+      }
+    }
+    if (reader == nullptr) {
+      reader = std::make_unique<rosbag2_cpp::Reader>(
+        std::make_unique<rosbag2_cpp::readers::SequentialReader>());
+    }
+    return reader;
   }
 };
 
@@ -251,7 +278,12 @@ PYBIND11_MODULE(_transport, m) {
 
   py::class_<rosbag2_py::Player>(m, "Player")
   .def(py::init())
-  .def("play", &rosbag2_py::Player::play)
+  .def(
+    "play", &rosbag2_py::Player::play, py::arg("storage_options"), py::arg(
+      "play_options"), py::arg("duration") = std::nullopt)
+  .def(
+    "play_until", &rosbag2_py::Player::play, py::arg("storage_options"), py::arg(
+      "play_options"), py::arg("timestamp") = std::nullopt)
   ;
 
   py::class_<rosbag2_py::Recorder>(m, "Recorder")
