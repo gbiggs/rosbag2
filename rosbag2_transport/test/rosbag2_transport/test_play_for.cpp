@@ -136,7 +136,7 @@ public:
   std::future<void> await_received_messages_;
 };
 
-TEST_F(RosBag2PlayForTestFixture, play_for_recorded_messages_are_played_for_all_topics)
+TEST_F(RosBag2PlayForTestFixture, play_for_all_are_played_due_to_duration)
 {
   auto await_received_messages = sub_->spin_subscriptions();
 

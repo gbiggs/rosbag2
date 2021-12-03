@@ -89,7 +89,6 @@ public:
   ROSBAG2_TRANSPORT_PUBLIC
   void play_until(const rcutils_time_point_value_t & timestamp);
 
-
   ROSBAG2_TRANSPORT_PUBLIC
   rosbag2_cpp::Reader * release_reader();
 
