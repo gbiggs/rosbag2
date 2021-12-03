@@ -184,6 +184,20 @@ Player::Player(
     {
       response->success = play_next();
     });
+  srv_play_for_ = create_service<rosbag2_interfaces_backport::srv::PlayFor>(
+    "~/play_for",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayFor::Request> request,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayFor::Response> response)
+    {
+      const rcutils_duration_value_t duration =
+      static_cast<rcutils_duration_value_t>(request->duration.sec) *
+      static_cast<rcutils_duration_value_t>(1000000000) +
+      static_cast<rcutils_duration_value_t>(request->duration.nanosec);
+      play({duration});
+      response->success = true;
+    });
 }
 
 Player::~Player()
@@ -212,7 +226,7 @@ bool Player::is_storage_completely_loaded() const
   return !storage_loading_future_.valid();
 }
 
-void Player::play()
+void Player::play(const std::optional<rcutils_duration_value_t> & duration)
 {
   is_in_play_ = true;
 
@@ -231,12 +245,18 @@ void Player::play()
     do {
       if (delay > 0.0) {
         RCLCPP_INFO_STREAM(this->get_logger(), "Sleep " << delay << " sec");
-        std::chrono::duration<float> duration(delay);
-        std::this_thread::sleep_for(duration);
+        std::chrono::duration<float> delay_duration(delay);
+        std::this_thread::sleep_for(delay_duration);
       }
       reader_->open(storage_options_, {"", rmw_get_serialization_format()});
       const auto starting_time = std::chrono::duration_cast<std::chrono::nanoseconds>(
         reader_->get_metadata().starting_time.time_since_epoch()).count();
+
+      std::optional<rcutils_time_point_value_t> play_until_time{};
+      if (duration.has_value() && *duration > 0) {
+        play_until_time = {starting_time + *duration};
+      }
+
       clock_->jump(starting_time);
 
       storage_loading_future_ = std::async(
@@ -244,7 +264,7 @@ void Player::play()
         [this]() {load_storage_content();});
 
       wait_for_filled_queue();
-      play_messages_from_queue();
+      play_messages_from_queue({play_until_time});
       reader_->close();
     } while (rclcpp::ok() && play_options_.loop);
   } catch (std::runtime_error & e) {
@@ -361,7 +381,8 @@ void Player::enqueue_up_to_boundary(uint64_t boundary)
   }
 }
 
-void Player::play_messages_from_queue()
+void Player::play_messages_from_queue(
+  const std::optional<rcutils_duration_value_t> & play_until_time)
 {
   playing_messages_from_queue_ = true;
   // Note: We need to use message_queue_.peek() instead of message_queue_.try_dequeue(message)
@@ -371,7 +392,10 @@ void Player::play_messages_from_queue()
     {
       rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
       // Do not move on until sleep_until returns true
-      // It will always sleep, so this is not a tight busy loop on pause
+      // It will always sleep, so this is not a tight busy loop on pause.
+      if (play_until_time.has_value() && message->time_stamp > *play_until_time) {
+        break;
+      }
       while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {}
       if (rclcpp::ok()) {
         {

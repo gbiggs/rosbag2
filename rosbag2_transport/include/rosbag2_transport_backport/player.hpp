@@ -18,6 +18,7 @@
 #include <chrono>
 #include <future>
 #include <memory>
+#include <optional> // NOLINT  -- cpplint complains about the inclusion order.
 #include <queue>
 #include <string>
 #include <unordered_map>
@@ -33,6 +34,7 @@
 #include "rosbag2_interfaces_backport/srv/get_rate.hpp"
 #include "rosbag2_interfaces_backport/srv/is_paused.hpp"
 #include "rosbag2_interfaces_backport/srv/pause.hpp"
+#include "rosbag2_interfaces_backport/srv/play_for.hpp"
 #include "rosbag2_interfaces_backport/srv/play_next.hpp"
 #include "rosbag2_interfaces_backport/srv/resume.hpp"
 #include "rosbag2_interfaces_backport/srv/set_rate.hpp"
@@ -81,7 +83,7 @@ public:
   virtual ~Player();
 
   ROSBAG2_TRANSPORT_PUBLIC
-  void play();
+  void play(const std::optional<rcutils_duration_value_t> & duration = std::nullopt);
 
   ROSBAG2_TRANSPORT_PUBLIC
   rosbag2_cpp::Reader * release_reader();
@@ -136,7 +138,7 @@ private:
   bool is_storage_completely_loaded() const;
   void enqueue_up_to_boundary(uint64_t boundary);
   void wait_for_filled_queue() const;
-  void play_messages_from_queue();
+  void play_messages_from_queue(const std::optional<rcutils_duration_value_t> & play_until_time);
   void prepare_publishers();
   bool publish_message(rosbag2_storage::SerializedBagMessageSharedPtr message);
   static constexpr double read_ahead_lower_bound_percentage_ = 0.9;
@@ -162,6 +164,7 @@ private:
   rclcpp::Service<rosbag2_interfaces_backport::srv::GetRate>::SharedPtr srv_get_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::SetRate>::SharedPtr srv_set_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayNext>::SharedPtr srv_play_next_;
+  rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_;
 
   template<typename AllocatorT = std::allocator<void>>
   std::shared_ptr<GenericPublisher> create_generic_publisher(
