@@ -11,6 +11,8 @@
 
   <depend>rclcpp</depend>
   <depend>rosbag2_cpp_backport</depend>
+  <depend>rosbag2_storage_backport</depend>
+  <depend>rosbag2_transport_backport</depend>
   <depend>example_interfaces</depend>
 
   <test_depend>ament_lint_auto</test_depend>
