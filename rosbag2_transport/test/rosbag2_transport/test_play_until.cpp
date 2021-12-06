@@ -101,7 +101,7 @@ public:
 
     // @{ Ordering matters. The mock reader implementation moves messages
     //    around without any knowledge about message chronology. It just picks
-    //    the next one Make sure to keep the list in order or sort it!
+    //    the next one. Make sure to keep the list in order or sort it!
     std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
     {serialize_test_message(kTopic1Name, 500, primitive_message1),
       serialize_test_message(kTopic2Name, 550, complex_message1),
