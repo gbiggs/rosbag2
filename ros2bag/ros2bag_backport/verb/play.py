@@ -136,8 +136,7 @@ class PlayVerb(VerbExtension):
         # consumption.
         timestamp = int(args.until * 1e9) if args.until else args.until
         if duration and timestamp:
-            raise AssertionError('Must provide either duration, timestamp or '
-                                 'nothing but not both at the same time.')
+            raise AssertionError('Duration and timestamp cannot be used together.')
 
         player = Player()
         if timestamp:
