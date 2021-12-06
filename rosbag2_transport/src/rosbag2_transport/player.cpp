@@ -257,7 +257,7 @@ void Player::do_play(
   // This is a faulty condition. This method must be called exclusively with
   // one or none of the attributes set, but not both.
   if (duration.has_value() && timestamp.has_value()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to play. Both duration and until timestamp are set.");
+    RCLCPP_ERROR(this->get_logger(), "Failed to play. Both duration and 'until' timestamp are set.");
     return;
   }
 
