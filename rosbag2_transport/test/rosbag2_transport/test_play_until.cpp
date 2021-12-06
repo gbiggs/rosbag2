@@ -255,7 +255,7 @@ TEST_F(
 
 TEST_F(
   RosBag2PlayUntilWithStartTimeOffsetTestFixture,
-  because_of_offset_none_message_is_received_for_all_topics)
+  because_of_offset_no_message_is_received_for_all_topics)
 {
   const rcutils_time_point_value_t timestamp =
     std::chrono::nanoseconds(std::chrono::milliseconds(250)).count();
