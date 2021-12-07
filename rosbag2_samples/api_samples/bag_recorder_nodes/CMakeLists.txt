@@ -48,7 +48,11 @@ install(TARGETS
 )
 
 add_executable(simple_player src/simple_player.cpp)
-ament_target_dependencies(simple_player rclcpp rosbag2_cpp_backport rosbag2_storage_backport rosbag2_transport_backport)
+ament_target_dependencies(simple_player
+  rclcpp
+  rosbag2_cpp_backport
+  rosbag2_storage_backport
+  rosbag2_transport_backport)
 
 install(TARGETS
   simple_player
