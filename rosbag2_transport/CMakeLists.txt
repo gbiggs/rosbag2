@@ -115,19 +115,25 @@ function(create_tests_for_rmw_implementation)
     AMENT_DEPS test_msgs rosbag2_test_common_backport
     ${SKIP_TEST})
 
+  rosbag2_transport_add_gmock(test_play_next
+      test/rosbag2_transport/test_play_next.cpp
+      INCLUDE_DIRS $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/rosbag2_transport>
+      LINK_LIBS rosbag2_transport_backport
+      AMENT_DEPS test_msgs rosbag2_test_common_backport)
+
   rosbag2_transport_add_gmock(test_play_publish_clock
     test/rosbag2_transport/test_play_publish_clock.cpp
     LINK_LIBS rosbag2_transport_backport
     AMENT_DEPS test_msgs rosbag2_test_common_backport
     ${SKIP_TEST})
 
-  rosbag2_transport_add_gmock(test_play_timing
-    test/rosbag2_transport/test_play_timing.cpp
+  rosbag2_transport_add_gmock(test_play_services
+    test/rosbag2_transport/test_play_services.cpp
     LINK_LIBS rosbag2_transport_backport
     AMENT_DEPS test_msgs rosbag2_test_common_backport)
 
-  rosbag2_transport_add_gmock(test_play_services
-    test/rosbag2_transport/test_play_services.cpp
+  rosbag2_transport_add_gmock(test_play_timing
+    test/rosbag2_transport/test_play_timing.cpp
     LINK_LIBS rosbag2_transport_backport
     AMENT_DEPS test_msgs rosbag2_test_common_backport)
 
@@ -137,11 +143,13 @@ function(create_tests_for_rmw_implementation)
     AMENT_DEPS test_msgs rosbag2_test_common_backport
     ${SKIP_TEST})
 
-  rosbag2_transport_add_gmock(test_play_next
-      test/rosbag2_transport/test_play_next.cpp
-      INCLUDE_DIRS $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/rosbag2_transport>
-      LINK_LIBS rosbag2_transport_backport
-      AMENT_DEPS test_msgs rosbag2_test_common_backport)
+  rosbag2_transport_add_gmock(test_play_until
+    src/rosbag2_transport/qos.cpp
+    test/rosbag2_transport/test_play_until.cpp
+    INCLUDE_DIRS $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/rosbag2_transport>
+    LINK_LIBS rosbag2_transport_backport
+    AMENT_DEPS test_msgs rosbag2_test_common_backport
+    ${SKIP_TEST})
 
   rosbag2_transport_add_gmock(test_qos
     src/rosbag2_transport/qos.cpp

@@ -85,6 +85,15 @@ class PlayVerb(VerbExtension):
         parser.add_argument(
             '-d', '--delay', type=float, default=0.0,
             help='Sleep SEC seconds before play. Valid range > 0.0')
+        parser.add_argument(
+            '-f', '--duration', type=float, default=None,
+            help='Play for SEC seconds. Default is None, meaning that it will not play based on '
+                 'time. It must not be set together with timestamp. Valid range > 0.0')
+        parser.add_argument(
+            '-u', '--until', type=float, default=None,
+            help='Play until a certain timestamp expressed as seconds since epoch. '
+                 'Default is none, meaning it will not affect playback execution. '
+                 'It must not be sent together with  duration. Valid range > 0.0')
 
     def main(self, *, args):  # noqa: D102
         qos_profile_overrides = {}  # Specify a valid default
@@ -120,6 +129,17 @@ class PlayVerb(VerbExtension):
         play_options.topic_remapping_options = topic_remapping
         play_options.clock_publish_frequency = args.clock
         play_options.delay = args.delay
+        # Gets the duration in nanoseconds when a value is provided for player
+        # consumption.
+        duration = int(args.duration * 1e9) if args.duration else args.duration
+        # Gets the timestamp in nanoseconds when a value is provided for player
+        # consumption.
+        timestamp = int(args.until * 1e9) if args.until else args.until
+        if duration and timestamp:
+            raise AssertionError('Duration and timestamp cannot be used together.')
 
         player = Player()
-        player.play(storage_options, play_options)
+        if timestamp:
+            player.play_until(storage_options, play_options, timestamp)
+        else:
+            player.play(storage_options, play_options, duration)

@@ -198,6 +198,20 @@ Player::Player(
       play({duration});
       response->success = true;
     });
+  srv_play_until_ = create_service<rosbag2_interfaces_backport::srv::PlayUntil>(
+    "~/play_until",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayUntil::Request> request,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayUntil::Response> response)
+    {
+      const rcutils_time_point_value_t timestamp =
+      static_cast<rcutils_time_point_value_t>(request->time.sec) *
+      static_cast<rcutils_time_point_value_t>(1000000000) +
+      static_cast<rcutils_time_point_value_t>(request->time.nanosec);
+      play_until(timestamp);
+      response->success = true;
+    });
 }
 
 Player::~Player()
@@ -228,6 +242,25 @@ bool Player::is_storage_completely_loaded() const
 
 void Player::play(const std::optional<rcutils_duration_value_t> & duration)
 {
+  do_play(duration, /* timestamp */ std::nullopt);
+}
+
+void Player::play_until(const rcutils_time_point_value_t & timestamp)
+{
+  do_play(/* duration */ std::nullopt, {timestamp});
+}
+
+void Player::do_play(
+  const std::optional<rcutils_duration_value_t> & duration,
+  const std::optional<rcutils_time_point_value_t> & timestamp)
+{
+  // This is a faulty condition. This method must be called exclusively with
+  // one or none of the attributes set, but not both.
+  if (duration.has_value() && timestamp.has_value()) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to play. Both duration and 'until' timestamp are set.");
+    return;
+  }
+
   is_in_play_ = true;
 
   float delay;
@@ -252,10 +285,15 @@ void Player::play(const std::optional<rcutils_duration_value_t> & duration)
       const auto starting_time = std::chrono::duration_cast<std::chrono::nanoseconds>(
         reader_->get_metadata().starting_time.time_since_epoch()).count();
 
+      // Define the time constraint. It could be based on duration or on a
+      // specific timestamp.
       std::optional<rcutils_time_point_value_t> play_until_time{};
       if (duration.has_value() && *duration > 0) {
         play_until_time = {starting_time + *duration};
+      } else if (timestamp.has_value()) {
+        play_until_time = timestamp;
       }
+      // else: we keep the nullopt which means play without any time constraint.
 
       clock_->jump(starting_time);
 
