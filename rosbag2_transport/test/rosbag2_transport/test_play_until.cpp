@@ -101,7 +101,7 @@ public:
 
     // @{ Ordering matters. The mock reader implementation moves messages
     //    around without any knowledge about message chronology. It just picks
-    //    the next one Make sure to keep the list in order or sort it!
+    //    the next one. Make sure to keep the list in order or sort it!
     std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
     {serialize_test_message(kTopic1Name, 500, primitive_message1),
       serialize_test_message(kTopic2Name, 550, complex_message1),
@@ -255,7 +255,7 @@ TEST_F(
 
 TEST_F(
   RosBag2PlayUntilWithStartTimeOffsetTestFixture,
-  because_of_offset_none_message_is_received_for_all_topics)
+  because_of_offset_no_message_is_received_for_all_topics)
 {
   const rcutils_time_point_value_t timestamp =
     std::chrono::nanoseconds(std::chrono::milliseconds(250)).count();
