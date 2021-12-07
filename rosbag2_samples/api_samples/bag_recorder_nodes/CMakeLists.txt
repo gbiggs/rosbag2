@@ -17,9 +17,11 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(example_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rosbag2_cpp_backport REQUIRED)
-find_package(example_interfaces REQUIRED)
+find_package(rosbag2_storage_backport REQUIRED)
+find_package(rosbag2_transport_backport REQUIRED)
 
 add_executable(simple_bag_recorder src/simple_bag_recorder.cpp)
 ament_target_dependencies(simple_bag_recorder rclcpp rosbag2_cpp_backport example_interfaces)
@@ -42,6 +44,18 @@ ament_target_dependencies(data_generator_executable rclcpp rosbag2_cpp_backport 
 
 install(TARGETS
   data_generator_executable
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+add_executable(simple_player src/simple_player.cpp)
+ament_target_dependencies(simple_player
+  rclcpp
+  rosbag2_cpp_backport
+  rosbag2_storage_backport
+  rosbag2_transport_backport)
+
+install(TARGETS
+  simple_player
   DESTINATION lib/${PROJECT_NAME}
 )
 
