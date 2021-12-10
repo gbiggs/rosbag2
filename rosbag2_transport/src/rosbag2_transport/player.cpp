@@ -359,7 +359,7 @@ rosbag2_storage::SerializedBagMessageSharedPtr * Player::peek_next_message_from_
   return message_ptr;
 }
 
-bool Player::play_next(std::optional<uint64_t> num_messages)
+bool Player::play_next(const std::optional<uint64_t> num_messages)
 {
   // Evaluates the escape condition in which no message is required to be published.
   if (num_messages.has_value() && *num_messages == 0) {
