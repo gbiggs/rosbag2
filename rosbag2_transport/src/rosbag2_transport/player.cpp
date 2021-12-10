@@ -179,10 +179,10 @@ Player::Player(
     "~/play_next",
     [this](
       const std::shared_ptr<rmw_request_id_t>/* request_header */,
-      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayNext::Request>/* request */,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayNext::Request> request,
       const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayNext::Response> response)
     {
-      response->success = play_next();
+      response->success = play_next({request->num_messages});
     });
   srv_play_for_ = create_service<rosbag2_interfaces_backport::srv::PlayFor>(
     "~/play_for",
