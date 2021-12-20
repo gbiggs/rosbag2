@@ -396,6 +396,8 @@ bool Player::play_next(const std::optional<uint64_t> num_messages)
     if (!next_message_published) {
       break;
     }
+    // next_message_published becomes true when the message is effectively
+    // published (i.e. there is a matching publisher for that message topic).
     message_countdown--;
   }
   return next_message_published;
