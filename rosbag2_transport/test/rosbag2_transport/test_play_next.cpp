@@ -421,7 +421,7 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_only_filtered_topics) {
   EXPECT_THAT(replayed_topic2, SizeIs(Eq(3u)));
 }
 
-TEST_F(RosBag2PlayTestFixture, play_next_no_message_must_success) {
+TEST_F(RosBag2PlayTestFixture, play_next_no_message_must_succeed) {
   auto primitive_message = get_messages_basic_types()[0];
   primitive_message->int32_value = 42;
 
