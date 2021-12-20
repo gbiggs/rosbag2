@@ -183,6 +183,7 @@ private:
   rclcpp::Service<rosbag2_interfaces_backport::srv::SetRate>::SharedPtr srv_set_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayNext>::SharedPtr srv_play_next_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_;
+  rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_the_next_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayUntil>::SharedPtr srv_play_until_;
 
   template<typename AllocatorT = std::allocator<void>>
