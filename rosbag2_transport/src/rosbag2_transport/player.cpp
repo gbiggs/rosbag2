@@ -179,10 +179,10 @@ Player::Player(
     "~/play_next",
     [this](
       const std::shared_ptr<rmw_request_id_t>/* request_header */,
-      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayNext::Request>/* request */,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayNext::Request> request,
       const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayNext::Response> response)
     {
-      response->success = play_next();
+      response->success = play_next({request->num_messages});
     });
   srv_play_for_ = create_service<rosbag2_interfaces_backport::srv::PlayFor>(
     "~/play_for",
@@ -257,7 +257,9 @@ void Player::do_play(
   // This is a faulty condition. This method must be called exclusively with
   // one or none of the attributes set, but not both.
   if (duration.has_value() && timestamp.has_value()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to play. Both duration and 'until' timestamp are set.");
+    RCLCPP_ERROR(
+      this->get_logger(),
+      "Failed to play. Both duration and 'until' timestamp are set.");
     return;
   }
 
@@ -357,8 +359,13 @@ rosbag2_storage::SerializedBagMessageSharedPtr * Player::peek_next_message_from_
   return message_ptr;
 }
 
-bool Player::play_next()
+bool Player::play_next(const std::optional<uint64_t> num_messages)
 {
+  // Evaluates the escape condition in which no message is required to be published.
+  if (num_messages.has_value() && *num_messages == 0) {
+    return true;
+  }
+
   // Temporary take over playback from play_messages_from_queue()
   std::lock_guard<std::mutex> lk(skip_message_in_main_play_loop_mutex_);
 
@@ -366,18 +373,32 @@ bool Player::play_next()
     return false;
   }
 
-  skip_message_in_main_play_loop_ = true;
-  rosbag2_storage::SerializedBagMessageSharedPtr * message_ptr = peek_next_message_from_queue();
+  bool next_message_published{false};
+  uint64_t message_countdown = num_messages.has_value() ? *num_messages : 1u;
 
-  bool next_message_published = false;
-  while (message_ptr != nullptr && !next_message_published) {
-    {
-      rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
-      next_message_published = publish_message(message);
-      clock_->jump(message->time_stamp);
+  while (message_countdown > 0) {
+    // Resets state for the new iteration.
+    next_message_published = false;
+    skip_message_in_main_play_loop_ = true;
+    // Grabs a message and tries to publish it. When there is no publisher with
+    // the message->topic_name, it just peeks the next one.
+    rosbag2_storage::SerializedBagMessageSharedPtr * message_ptr = peek_next_message_from_queue();
+    while (message_ptr != nullptr && !next_message_published) {
+      {
+        rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
+        next_message_published = publish_message(message);
+        clock_->jump(message->time_stamp);
+      }
+      message_queue_.pop();
+      message_ptr = peek_next_message_from_queue();
     }
-    message_queue_.pop();
-    message_ptr = peek_next_message_from_queue();
+    // There are no more messages of the built publishers to play.
+    if (!next_message_published) {
+      break;
+    }
+    // next_message_published becomes true when the message is effectively
+    // published (i.e. there is a matching publisher for that message topic).
+    message_countdown--;
   }
   return next_message_published;
 }
