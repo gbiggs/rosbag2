@@ -198,7 +198,7 @@ Player::Player(
       play({duration});
       response->success = true;
     });
-  srv_play_for_the_next_  = create_service<rosbag2_interfaces_backport::srv::PlayFor>(
+  srv_play_for_the_next_ = create_service<rosbag2_interfaces_backport::srv::PlayFor>(
     "~/play_for_the_next",
     [this](
       const std::shared_ptr<rmw_request_id_t>/* request_header */,
