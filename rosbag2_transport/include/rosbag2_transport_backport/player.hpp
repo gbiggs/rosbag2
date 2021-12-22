@@ -122,6 +122,9 @@ public:
   bool set_rate(double);
 
   /// \brief Playing next message from queue when in pause.
+  /// \param num_messages The number of messages to play from the queue. It is
+  /// nullopt by default which makes it just take one. When zero, it'll just
+  /// make the method return true.
   /// \details This is blocking call and it will wait until next available message will be
   /// published or rclcpp context shut down.
   /// \note If internal player queue is starving and storage has not been completely loaded,
@@ -129,7 +132,7 @@ public:
   /// \return true if Player::play() has been started, player in pause mode and successfully
   /// played next message, otherwise false.
   ROSBAG2_TRANSPORT_PUBLIC
-  bool play_next();
+  bool play_next(const std::optional<uint64_t> num_messages = std::nullopt);
 
   /// \brief Playing for the next \p duration messages from queue when in pause.
   /// \details This is blocking call and it will wait up to \p duration for available messages
