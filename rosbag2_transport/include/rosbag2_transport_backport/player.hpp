@@ -134,13 +134,13 @@ public:
   ROSBAG2_TRANSPORT_PUBLIC
   bool play_next(const std::optional<uint64_t> num_messages = std::nullopt);
 
-  /// \brief Playing for the next \p duration messages from queue when in pause.
-  /// \details This is blocking call and it will wait up to \p duration for available messages
-  /// to be published or rclcpp context shut down.
+  /// \brief Play the next \p duration of messages from the queue when paused.
+  /// \details This is a blocking call and it will wait up to \p duration for available messages
+  /// to be published or the rclcpp context shut down.
   /// \param duration The time the player must play messages.
-  /// \note If internal player queue is starving and storage has not been completely loaded,
-  /// this method will wait until new element will be pushed to the queue.
-  /// \return true if Player::play() has been started, player in pause mode and successfully
+  /// \note If the internal player queue is starved and storage has not been completely loaded,
+  /// this method will wait until a new element is pushed to the queue.
+  /// \return true if Player::play() has been started, the player is in pause mode and successfully
   /// played messages (at least one) for the specified \p duration, otherwise false.
   ROSBAG2_TRANSPORT_PUBLIC
   bool play_for_the_next(const rcutils_duration_value_t duration);
