@@ -141,6 +141,11 @@ public:
       });
   }
 
+  void clear_received_messages_for(const std::string & topic_name)
+  {
+    subscribed_messages_[topic_name].clear();
+  }
+
 private:
   bool continue_spinning(
     const std::unordered_map<std::string, size_t> & expected_topics_with_sizes,

@@ -194,13 +194,11 @@ TEST_F(RosBag2PlayForTheNextTestFixture, play_for_the_next_duration_which_plays_
   auto player = std::make_shared<MockPlayer>(std::move(reader), storage_options_, play_options_);
 
   sub_ = std::make_shared<SubscriptionManager>();
-  sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, messages.size());
+  sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, 1);
 
   // Wait for discovery to match publishers with subscribers
   ASSERT_TRUE(
     sub_->spin_and_wait_for_matched(player->get_list_of_publishers(), std::chrono::seconds(30)));
-
-  auto await_received_messages = sub_->spin_subscriptions();
 
   player->pause();
 
@@ -210,26 +208,39 @@ TEST_F(RosBag2PlayForTheNextTestFixture, play_for_the_next_duration_which_plays_
   player->wait_for_playback_to_start();
 
   // Should play only one message.
+  sub_->clear_received_messages_for(kTopic1);
   ASSERT_TRUE(player->play_for_the_next(MilliSecondsToDuration(1200u)));
   ASSERT_TRUE(player->is_paused());
+  sub_->spin_subscriptions().get();
+  auto replayed_topic1 = sub_->get_received_messages<test_msgs::msg::BasicTypes>(kTopic1);
+  EXPECT_THAT(replayed_topic1, SizeIs(1u));
 
   // Should not play any message.
+  sub_->clear_received_messages_for(kTopic1);
   ASSERT_FALSE(player->play_for_the_next(MilliSecondsToDuration(100u)));
   ASSERT_TRUE(player->is_paused());
+  sub_->spin_subscriptions().get();
+  replayed_topic1 = sub_->get_received_messages<test_msgs::msg::BasicTypes>(kTopic1);
+  EXPECT_THAT(replayed_topic1, SizeIs(0u));
 
   // Should play one message.
+  sub_->clear_received_messages_for(kTopic1);
   ASSERT_TRUE(player->play_for_the_next(MilliSecondsToDuration(300u)));
   ASSERT_TRUE(player->is_paused());
+  sub_->spin_subscriptions().get();
+  replayed_topic1 = sub_->get_received_messages<test_msgs::msg::BasicTypes>(kTopic1);
+  EXPECT_THAT(replayed_topic1, SizeIs(1u));
 
-  // Continues with the rest of the messages.
+  // Continues with the rest (2 more) of the messages.
+  sub_->clear_received_messages_for(kTopic1);
+  // Required to receive 2 now.
+  sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, 2);
   player->resume();
   player_future.get();
-  await_received_messages.get();
-
-  auto replayed_topic1 = sub_->get_received_messages<test_msgs::msg::BasicTypes>(kTopic1);
-  EXPECT_THAT(replayed_topic1, SizeIs(4u));
+  sub_->spin_subscriptions().get();
+  replayed_topic1 = sub_->get_received_messages<test_msgs::msg::BasicTypes>(kTopic1);
+  EXPECT_THAT(replayed_topic1, SizeIs(2u));
 }
-
 
 TEST_F(RosBag2PlayForTheNextTestFixture, play_for_the_next_duration_with_filtered_topics) {
   auto prepared_mock_reader = std::make_unique<MockSequentialReader>();
