@@ -134,6 +134,17 @@ public:
   ROSBAG2_TRANSPORT_PUBLIC
   bool play_next(const std::optional<uint64_t> num_messages = std::nullopt);
 
+  /// \brief Play the next \p duration of messages from the queue when paused.
+  /// \details This is a blocking call and it will wait up to \p duration for available messages
+  /// to be published or the rclcpp context shut down.
+  /// \param duration The time the player must play messages.
+  /// \note If the internal player queue is starved and storage has not been completely loaded,
+  /// this method will wait until a new element is pushed to the queue.
+  /// \return true if Player::play() has been started, the player is in pause mode and successfully
+  /// played messages (at least one) for the specified \p duration, otherwise false.
+  ROSBAG2_TRANSPORT_PUBLIC
+  bool play_for_the_next(const rcutils_duration_value_t duration);
+
 protected:
   std::atomic<bool> playing_messages_from_queue_{false};
   rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_publisher_;
@@ -175,6 +186,7 @@ private:
   rclcpp::Service<rosbag2_interfaces_backport::srv::SetRate>::SharedPtr srv_set_rate_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayNext>::SharedPtr srv_play_next_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_;
+  rclcpp::Service<rosbag2_interfaces_backport::srv::PlayFor>::SharedPtr srv_play_for_the_next_;
   rclcpp::Service<rosbag2_interfaces_backport::srv::PlayUntil>::SharedPtr srv_play_until_;
 
   template<typename AllocatorT = std::allocator<void>>

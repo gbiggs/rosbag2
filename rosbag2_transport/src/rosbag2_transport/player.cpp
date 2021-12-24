@@ -198,6 +198,19 @@ Player::Player(
       play({duration});
       response->success = true;
     });
+  srv_play_for_the_next_ = create_service<rosbag2_interfaces_backport::srv::PlayFor>(
+    "~/play_for_the_next",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayFor::Request> request,
+      const std::shared_ptr<rosbag2_interfaces_backport::srv::PlayFor::Response> response)
+    {
+      const rcutils_duration_value_t duration =
+      static_cast<rcutils_duration_value_t>(request->duration.sec) *
+      static_cast<rcutils_duration_value_t>(1000000000) +
+      static_cast<rcutils_duration_value_t>(request->duration.nanosec);
+      response->success = play_for_the_next(duration);
+    });
   srv_play_until_ = create_service<rosbag2_interfaces_backport::srv::PlayUntil>(
     "~/play_until",
     [this](
@@ -401,6 +414,53 @@ bool Player::play_next(const std::optional<uint64_t> num_messages)
     message_countdown--;
   }
   return next_message_published;
+}
+
+bool Player::play_for_the_next(const rcutils_duration_value_t duration)
+{
+  // Temporary take over playback from play_messages_from_queue()
+  std::lock_guard<std::mutex> lk(skip_message_in_main_play_loop_mutex_);
+
+  // Evaluates preconditions.
+  if (!clock_->is_paused() || !is_in_play_ || duration == 0) {
+    return false;
+  }
+
+  bool next_message_published{false};
+  bool timeout_happend{false};
+  bool has_played_at_least_one_message{false};
+
+  const rcutils_time_point_value_t play_until_time = clock_->now() + duration;
+
+  while (!timeout_happend) {
+    // Resets state for the new iteration.
+    next_message_published = false;
+    skip_message_in_main_play_loop_ = true;
+    // Grabs a message and tries to publish it. When there is no publisher with
+    // the message->topic_name, it just peeks the next one.
+    rosbag2_storage::SerializedBagMessageSharedPtr * message_ptr = peek_next_message_from_queue();
+    while (message_ptr != nullptr && !next_message_published) {
+      if ((*message_ptr)->time_stamp <= play_until_time) {
+        rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
+        next_message_published = publish_message(message);
+        has_played_at_least_one_message = true;
+        clock_->jump(message->time_stamp);
+      } else {
+        // Should break the iteration loop due to timeout.
+        timeout_happend = true;
+        break;
+      }
+      message_queue_.pop();
+      message_ptr = peek_next_message_from_queue();
+    }
+    // There are no more messages of the built publishers to play.
+    if (!next_message_published) {
+      break;
+    }
+  }
+  // Make sure to move the time cursor up to play_until_time.
+  clock_->jump(play_until_time);
+  return has_played_at_least_one_message;
 }
 
 void Player::wait_for_filled_queue() const
