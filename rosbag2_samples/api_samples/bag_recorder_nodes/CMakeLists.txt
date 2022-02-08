@@ -18,11 +18,12 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rosbag2_cpp REQUIRED)
+find_package(rosbag2_cpp_backport REQUIRED)
+find_package(rosbag2_storage_backport REQUIRED)
 find_package(example_interfaces REQUIRED)
 
 add_executable(simple_bag_recorder src/simple_bag_recorder.cpp)
-ament_target_dependencies(simple_bag_recorder rclcpp rosbag2_cpp example_interfaces)
+ament_target_dependencies(simple_bag_recorder rclcpp rosbag2_cpp_backport example_interfaces)
 
 install(TARGETS
   simple_bag_recorder
@@ -30,7 +31,7 @@ install(TARGETS
 )
 
 add_executable(data_generator_node src/data_generator_node.cpp)
-ament_target_dependencies(data_generator_node rclcpp rosbag2_cpp example_interfaces)
+ament_target_dependencies(data_generator_node rclcpp rosbag2_cpp_backport example_interfaces)
 
 install(TARGETS
   data_generator_node
@@ -38,7 +39,7 @@ install(TARGETS
 )
 
 add_executable(data_generator_executable src/data_generator_executable.cpp)
-ament_target_dependencies(data_generator_executable rclcpp rosbag2_cpp example_interfaces)
+ament_target_dependencies(data_generator_executable rclcpp rosbag2_cpp_backport rosbag2_storage_backport example_interfaces)
 
 install(TARGETS
   data_generator_executable

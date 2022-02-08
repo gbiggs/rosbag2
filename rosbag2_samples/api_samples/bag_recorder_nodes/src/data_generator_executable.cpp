@@ -18,9 +18,9 @@
 #include "example_interfaces/msg/int32.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "rosbag2_cpp/writer.hpp"
-#include "rosbag2_cpp/writers/sequential_writer.hpp"
-#include "rosbag2_storage/serialized_bag_message.hpp"
+#include "rosbag2_cpp_backport/writer.hpp"
+#include "rosbag2_cpp_backport/writers/sequential_writer.hpp"
+#include "rosbag2_storage_backport/serialized_bag_message.hpp"
 
 using namespace std::chrono_literals;
 
