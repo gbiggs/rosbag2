@@ -40,7 +40,7 @@ private:
   {
     rclcpp::Time time_stamp = this->now();
 
-    writer_->write(*msg, "chatter", "example_interfaces/msg/String", time_stamp);
+    writer_->write(msg, "chatter", "example_interfaces/msg/String", time_stamp);
   }
 
   rclcpp::Subscription<rclcpp::SerializedMessage>::SharedPtr subscription_;
