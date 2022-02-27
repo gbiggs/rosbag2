@@ -46,7 +46,7 @@ TEST_F(RosBag2PlayTestFixture, play_next_with_false_preconditions) {
   auto player = std::make_shared<MockPlayer>(std::move(reader), storage_options_, play_options_);
 
   ASSERT_FALSE(player->is_paused());
-  ASSERT_FALSE(player->play_next());
+  ASSERT_EQ(0u, player->play_next(1u));
   player->pause();
   ASSERT_TRUE(player->is_paused());
 }
@@ -88,9 +88,9 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_all_messages_without_delays) {
 
   ASSERT_TRUE(player->is_paused());
   auto start = std::chrono::steady_clock::now();
-  ASSERT_TRUE(player->play_next());
+  ASSERT_EQ(1u, player->play_next(1u));
   size_t played_messages = 1;
-  while (player->play_next()) {
+  while (player->play_next(1u) == 1u) {
     played_messages++;
   }
   auto replay_time = std::chrono::steady_clock::now() - start;
@@ -140,9 +140,9 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_one_by_one_messages_with_the_sa
   auto player_future = std::async(std::launch::async, [&player]() -> void {player->play();});
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next());
+  ASSERT_EQ(1u, player->play_next(1u));
   size_t played_messages = 1;
-  while (player->play_next()) {
+  while (player->play_next(1u) == 1u) {
     // Yield CPU resources for player-play() running in separate thread to make sure that it
     // will not play extra messages.
     std::this_thread::sleep_for(std::chrono::milliseconds(30));
@@ -194,25 +194,25 @@ TEST_F(RosBag2PlayTestFixture, play_next_n_messages_with_the_same_timestamp) {
   player->wait_for_playback_to_start();
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next({1u}));
+  ASSERT_TRUE(player->play_next(1u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(1u));
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next({2u}));
+  ASSERT_TRUE(player->play_next(2u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(3u));
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next({1u}));
+  ASSERT_TRUE(player->play_next(1u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(4u));
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_FALSE(player->play_next({1u}));
+  ASSERT_FALSE(player->play_next(1u));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(4u));
 
   ASSERT_TRUE(player->is_paused());
@@ -256,8 +256,8 @@ TEST_F(RosBag2PlayTestFixture, play_respect_messages_timing_after_play_next) {
   auto player_future = std::async(std::launch::async, [&player]() -> void {player->play();});
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next());
-  ASSERT_TRUE(player->play_next());
+  ASSERT_EQ(1u, player->play_next(1u));
+  ASSERT_EQ(1u, player->play_next(1u));
   ASSERT_TRUE(player->is_paused());
   player->resume();
   auto start = std::chrono::steady_clock::now();
@@ -310,7 +310,7 @@ TEST_F(RosBag2PlayTestFixture, player_can_resume_after_play_next) {
   auto player_future = std::async(std::launch::async, [&player]() -> void {player->play();});
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next());
+  ASSERT_EQ(1u, player->play_next(1u));
   ASSERT_TRUE(player->is_paused());
   player->resume();
   player_future.get();
@@ -366,13 +366,13 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_only_filtered_topics) {
   auto player_future = std::async(std::launch::async, [&player]() -> void {player->play();});
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next());
+  ASSERT_EQ(1u, player->play_next(1u));
 
   size_t played_messages = 1;
-  while (player->play_next()) {
+  while (player->play_next(1u) == 1u) {
     played_messages++;
   }
-  ASSERT_EQ(played_messages, 3U);
+  ASSERT_EQ(played_messages, 3u);
 
   ASSERT_TRUE(player->is_paused());
   player->resume();
@@ -421,7 +421,7 @@ TEST_F(RosBag2PlayTestFixture, play_next_no_message_must_succeed) {
   player->wait_for_playback_to_start();
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next({0u}));
+  ASSERT_EQ(0u, player->play_next(0u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(0u));
