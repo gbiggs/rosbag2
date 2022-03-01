@@ -191,7 +191,6 @@ TEST_F(RosBag2PlayTestFixture, play_next_n_messages_with_the_same_timestamp) {
   ASSERT_TRUE(player->is_paused());
 
   auto player_future = std::async(std::launch::async, [&player]() -> void {player->play();});
-  player->wait_for_playback_to_start();
 
   ASSERT_TRUE(player->is_paused());
   ASSERT_EQ(0u, player->play_next(0u));
