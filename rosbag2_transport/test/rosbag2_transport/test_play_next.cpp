@@ -60,10 +60,10 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_all_messages_without_delays) {
 
   std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
   {
-    serialize_test_message("topic1", 2100, primitive_message),
-    serialize_test_message("topic1", 3300, primitive_message),
-    serialize_test_message("topic1", 4600, primitive_message),
-    serialize_test_message("topic1", 5900, primitive_message)
+    serialize_test_message("topic1", 210, primitive_message),
+    serialize_test_message("topic1", 330, primitive_message),
+    serialize_test_message("topic1", 460, primitive_message),
+    serialize_test_message("topic1", 590, primitive_message)
   };
 
   auto prepared_mock_reader = std::make_unique<MockSequentialReader>();
@@ -95,7 +95,7 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_all_messages_without_delays) {
   }
   auto replay_time = std::chrono::steady_clock::now() - start;
   ASSERT_EQ(played_messages, messages.size());
-  ASSERT_THAT(replay_time, Lt(std::chrono::seconds(2)));
+  ASSERT_THAT(replay_time, Lt(std::chrono::milliseconds(600)));
   ASSERT_TRUE(player->is_paused());
   player->resume();
   player_future.get();
@@ -114,10 +114,10 @@ TEST_F(RosBag2PlayTestFixture, play_next_playing_one_by_one_messages_with_the_sa
 
   std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
   {
-    serialize_test_message("topic1", 1000, primitive_message),
-    serialize_test_message("topic1", 1000, primitive_message),
-    serialize_test_message("topic1", 1000, primitive_message),
-    serialize_test_message("topic1", 1000, primitive_message)
+    serialize_test_message("topic1", 100, primitive_message),
+    serialize_test_message("topic1", 100, primitive_message),
+    serialize_test_message("topic1", 100, primitive_message),
+    serialize_test_message("topic1", 100, primitive_message)
   };
 
   auto prepared_mock_reader = std::make_unique<MockSequentialReader>();
@@ -167,10 +167,10 @@ TEST_F(RosBag2PlayTestFixture, play_next_n_messages_with_the_same_timestamp) {
 
   std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
   {
-    serialize_test_message("topic1", 1000, primitive_message),
-    serialize_test_message("topic1", 1000, primitive_message),
-    serialize_test_message("topic1", 1000, primitive_message),
-    serialize_test_message("topic1", 1000, primitive_message)
+    serialize_test_message("topic1", 100, primitive_message),
+    serialize_test_message("topic1", 100, primitive_message),
+    serialize_test_message("topic1", 100, primitive_message),
+    serialize_test_message("topic1", 100, primitive_message)
   };
 
   auto prepared_mock_reader = std::make_unique<MockSequentialReader>();
@@ -194,25 +194,25 @@ TEST_F(RosBag2PlayTestFixture, play_next_n_messages_with_the_same_timestamp) {
   player->wait_for_playback_to_start();
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next(1u));
+  ASSERT_EQ(1u, player->play_next(1u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(1u));
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next(2u));
+  ASSERT_EQ(2u, player->play_next(2u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(3u));
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_TRUE(player->play_next(1u));
+  ASSERT_EQ(1u, player->play_next(1u));
   // Yield CPU resources so messages are actually sent through.
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(4u));
 
   ASSERT_TRUE(player->is_paused());
-  ASSERT_FALSE(player->play_next(1u));
+  ASSERT_EQ(0u, player->play_next(1u));
   EXPECT_THAT(sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1"), SizeIs(4u));
 
   ASSERT_TRUE(player->is_paused());
@@ -397,7 +397,7 @@ TEST_F(RosBag2PlayTestFixture, play_next_no_message_must_succeed) {
 
   std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
   {
-    serialize_test_message("topic1", 1000, primitive_message)
+    serialize_test_message("topic1", 100, primitive_message)
   };
 
   auto prepared_mock_reader = std::make_unique<MockSequentialReader>();

@@ -343,8 +343,18 @@ uint64_t Player::play_next(const uint64_t num_messages)
     while (message_ptr != nullptr && !next_message_published) {
       {
         rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
+
+        // Do not move on until sleep_until returns true
+        // It will always sleep, so this is not a tight busy loop on pause
+        clock_->resume();
+        while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {
+          if (std::atomic_exchange(&cancel_wait_for_next_message_, false)) {
+            break;
+          }
+        }
+        clock_->pause();
+
         next_message_published = publish_message(message);
-        clock_->jump(message->time_stamp);
       }
       message_queue_.pop();
       message_ptr = peek_next_message_from_queue();
@@ -355,6 +365,7 @@ uint64_t Player::play_next(const uint64_t num_messages)
 
     message_counter++;
   }
+
 
   return message_counter;
 }
