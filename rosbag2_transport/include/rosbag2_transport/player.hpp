@@ -126,7 +126,7 @@ public:
   /// published or rclcpp context shut down.
   /// \note If internal player queue is starving and storage has not been completely loaded,
   /// this method will wait until new element will be pushed to the queue.
-  /// \return The number of effectively sent messages from the queue.
+  /// \return The number of actually sent messages from the queue.
   ROSBAG2_TRANSPORT_PUBLIC
   virtual uint64_t play_next(const uint64_t num_messages);
 
