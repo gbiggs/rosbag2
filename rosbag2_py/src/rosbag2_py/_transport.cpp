@@ -69,6 +69,17 @@ public:
       static_cast<rcl_duration_value_t>(RCUTILS_S_TO_NS(delay)));
   }
 
+  double getPlaybackDuration() const
+  {
+    return RCUTILS_NS_TO_S(static_cast<double>(this->playback_duration.nanoseconds()));
+  }
+
+  void setPlaybackDuration(double playback_duration)
+  {
+    this->playback_duration = rclcpp::Duration::from_nanoseconds(
+      static_cast<rcl_duration_value_t>(RCUTILS_S_TO_NS(playback_duration)));
+  }
+
   double getDelay() const
   {
     return RCUTILS_NS_TO_S(static_cast<double>(this->delay.nanoseconds()));
@@ -120,8 +131,7 @@ public:
 
   void play(
     const rosbag2_storage::StorageOptions & storage_options,
-    PlayOptions & play_options,
-    const std::optional<rcutils_duration_value_t> & duration)
+    PlayOptions & play_options)
   {
     auto reader = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options);
     auto player = std::make_shared<rosbag2_transport::Player>(
@@ -133,7 +143,7 @@ public:
       [&exec]() {
         exec.spin();
       });
-    player->play(duration);
+    player->play();
 
     exec.cancel();
     spin_thread.join();
@@ -242,6 +252,10 @@ PYBIND11_MODULE(_transport, m) {
     "delay",
     &PlayOptions::getDelay,
     &PlayOptions::setDelay)
+  .def_property(
+    "playback_duration",
+    &PlayOptions::getPlaybackDuration,
+    &PlayOptions::setPlaybackDuration)
   .def_readwrite("disable_keyboard_controls", &PlayOptions::disable_keyboard_controls)
   .def_readwrite("start_paused", &PlayOptions::start_paused)
   .def_property(
@@ -277,8 +291,7 @@ PYBIND11_MODULE(_transport, m) {
   py::class_<rosbag2_py::Player>(m, "Player")
   .def(py::init())
   .def(
-    "play", &rosbag2_py::Player::play, py::arg("storage_options"), py::arg(
-      "play_options"), py::arg("duration") = std::nullopt)
+    "play", &rosbag2_py::Player::play, py::arg("storage_options"), py::arg("play_options"))
   ;
 
   py::class_<rosbag2_py::Recorder>(m, "Recorder")
