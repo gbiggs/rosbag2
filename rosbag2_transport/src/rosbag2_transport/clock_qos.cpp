@@ -20,7 +20,7 @@ namespace rosbag2_transport
 ClockQoS::ClockQoS(const rclcpp::QoSInitialization & qos_initialization)
 // Using `rmw_qos_profile_sensor_data` intentionally.
 // It's best effort and `qos_initialization` is overriding the depth to 1.
-: QoS(qos_initialization, rmw_qos_profile_sensor_data)
+: QoS(qos_initialization, rmw_qos_profile_default)
 {}
 
 }  // namespace rosbag2_transport
