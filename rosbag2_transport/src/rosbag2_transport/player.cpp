@@ -452,7 +452,6 @@ void Player::play_messages_from_queue(const rcutils_duration_value_t & play_unti
     // Do not move on until sleep_until returns true
     // It will always sleep, so this is not a tight busy loop on pause
     if (play_until_time >= starting_time_ && message->time_stamp > play_until_time) {
-      // RCLCPP_INFO_STREAM(get_logger(), "play_messages_from_queue(). play_until_time >= starting_time_: " << (play_until_time >= starting_time_) << " | message->time_stamp > play_until_time: " << (message->time_stamp > play_until_time));
       break;
     }
     while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {

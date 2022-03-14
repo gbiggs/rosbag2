@@ -36,11 +36,12 @@
 #include "rosbag2_play_test_fixture.hpp"
 #include "rosbag2_transport_test_fixture.hpp"
 
+#include "mock_player.hpp"
+
 using namespace ::testing;  // NOLINT
 using namespace rosbag2_transport;  // NOLINT
 using namespace std::chrono_literals;  // NOLINT
 using namespace rosbag2_test_common;  // NOLINT
-
 
 constexpr int kIntValue{32};
 
@@ -113,7 +114,7 @@ public:
     return messages;
   }
 
-  void SetUp() override
+  void InitPlayerWithPlaybackDurationAndPlay(int64_t milliseconds)
   {
     auto topic_types = get_topic_types();
     auto messages = get_serialized_messages();
@@ -127,22 +128,29 @@ public:
     sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, 2);
     sub_->add_subscription<test_msgs::msg::Arrays>(kTopic2, 2);
 
-    player_ = std::make_shared<rosbag2_transport::Player>(
+    play_options_.playback_duration =
+      rclcpp::Duration(std::chrono::nanoseconds(std::chrono::milliseconds(milliseconds)));
+    player_ = std::make_shared<MockPlayer>(
       std::move(
         reader), storage_options_, play_options_);
+    // Wait for discovery to match publishers with subscribers
+    ASSERT_TRUE(
+      sub_->spin_and_wait_for_matched(player_->get_list_of_publishers(), std::chrono::seconds(5)));
+
+    auto await_received_messages = sub_->spin_subscriptions();
+
+    player_->play();
+
+    await_received_messages.get();
   }
 
-  std::shared_ptr<rosbag2_transport::Player> player_;
-  std::future<void> await_received_messages_;
+  std::shared_ptr<MockPlayer> player_;
 };
+
 
 TEST_F(RosBag2PlayForTestFixture, play_for_all_are_played_due_to_duration)
 {
-  auto await_received_messages = sub_->spin_subscriptions();
-
-  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(1000)).count());
-
-  await_received_messages.get();
+  InitPlayerWithPlaybackDurationAndPlay(1000);
 
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
@@ -158,14 +166,7 @@ TEST_F(RosBag2PlayForTestFixture, play_for_all_are_played_due_to_duration)
 
 TEST_F(RosBag2PlayForTestFixture, play_for_none_are_played_due_to_duration)
 {
-  const rcutils_duration_value_t duration =
-    std::chrono::nanoseconds(std::chrono::milliseconds(300)).count();
-
-  auto await_received_messages = sub_->spin_subscriptions_for(duration);
-
-  player_->play(duration);
-
-  await_received_messages.get();
+  InitPlayerWithPlaybackDurationAndPlay(300);
 
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
@@ -178,14 +179,7 @@ TEST_F(RosBag2PlayForTestFixture, play_for_none_are_played_due_to_duration)
 
 TEST_F(RosBag2PlayForTestFixture, play_for_less_than_the_total_duration)
 {
-  const rcutils_duration_value_t duration =
-    std::chrono::nanoseconds(std::chrono::milliseconds(800)).count();
-
-  auto await_received_messages = sub_->spin_subscriptions_for(duration);
-
-  player_->play(duration);
-
-  await_received_messages.get();
+  InitPlayerWithPlaybackDurationAndPlay(800);
 
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
@@ -206,7 +200,6 @@ public:
   {
     // Filter allows /topic2, blocks /topic1
     play_options_.topics_to_filter = {"topic2"};
-    RosBag2PlayForTestFixture::SetUp();
   }
 };
 
@@ -214,11 +207,7 @@ TEST_F(
   RosBag2PlayForFilteredTopicTestFixture,
   play_for_full_duration_recorded_messages_with_filtered_topics)
 {
-  auto await_received_messages = sub_->spin_subscriptions();
-
-  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(1000)).count());
-
-  await_received_messages.get();
+  InitPlayerWithPlaybackDurationAndPlay(1000);
 
   auto replayed_test_primitives =
     sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
@@ -236,11 +225,7 @@ TEST_F(
   RosBag2PlayForFilteredTopicTestFixture,
   play_for_short_duration_recorded_messages_with_filtered_topics)
 {
-  auto await_received_messages = sub_->spin_subscriptions();
-
-  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(300)).count());
-
-  await_received_messages.get();
+  InitPlayerWithPlaybackDurationAndPlay(300);
 
   auto replayed_test_primitives =
     sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
@@ -256,11 +241,7 @@ TEST_F(
   RosBag2PlayForFilteredTopicTestFixture,
   play_for_intermediate_duration_recorded_messages_with_filtered_topics)
 {
-  auto await_received_messages = sub_->spin_subscriptions();
-
-  player_->play(std::chrono::nanoseconds(std::chrono::milliseconds(800)).count());
-
-  await_received_messages.get();
+  InitPlayerWithPlaybackDurationAndPlay(800);
 
   auto replayed_test_primitives =
     sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
