@@ -666,6 +666,20 @@ void Player::create_control_services()
     {
       response->success = set_rate(request->rate);
     });
+  srv_play_ = create_service<rosbag2_interfaces::srv::Play>(
+    "~/play",
+    [this](
+      rosbag2_interfaces::srv::Play::Request::ConstSharedPtr request,
+      rosbag2_interfaces::srv::Play::Response::SharedPtr response)
+    {
+      play_options_.start_offset =
+      static_cast<rcutils_time_point_value_t>(RCUTILS_S_TO_NS(request->start_offset.sec)) +
+      static_cast<rcutils_time_point_value_t>(request->start_offset.nanosec);
+      play_options_.playback_duration = rclcpp::Duration(
+        request->playback_duration.sec, request->playback_duration.nanosec);
+      play();
+      response->success = true;
+    });
   srv_play_next_ = create_service<rosbag2_interfaces::srv::PlayNext>(
     "~/play_next",
     [this](
