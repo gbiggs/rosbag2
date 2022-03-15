@@ -449,11 +449,11 @@ void Player::play_messages_from_queue(const rcutils_duration_value_t & play_unti
   }
   while (message_ptr != nullptr && rclcpp::ok()) {
     rosbag2_storage::SerializedBagMessageSharedPtr message = *message_ptr;
-    // Do not move on until sleep_until returns true
-    // It will always sleep, so this is not a tight busy loop on pause
     if (play_until_time >= starting_time_ && message->time_stamp > play_until_time) {
       break;
     }
+    // Do not move on until sleep_until returns true
+    // It will always sleep, so this is not a tight busy loop on pause
     while (rclcpp::ok() && !clock_->sleep_until(message->time_stamp)) {
       if (std::atomic_exchange(&cancel_wait_for_next_message_, false)) {
         break;
