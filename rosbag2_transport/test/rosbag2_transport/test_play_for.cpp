@@ -123,10 +123,8 @@ public:
     prepared_mock_reader->prepare(messages, topic_types);
     auto reader = std::make_unique<rosbag2_cpp::Reader>(std::move(prepared_mock_reader));
 
-    // Due to a problem related to the subscriber, we play many (3) messages but make the subscriber
-    // node spin only until 2 have arrived. Hence the 2 as `launch_subscriber()` argument.
-    sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, 2);
-    sub_->add_subscription<test_msgs::msg::Arrays>(kTopic2, 2);
+    sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, 3);
+    sub_->add_subscription<test_msgs::msg::Arrays>(kTopic2, 3);
 
     play_options_.playback_duration =
       rclcpp::Duration(std::chrono::nanoseconds(std::chrono::milliseconds(milliseconds)));
@@ -154,12 +152,12 @@ TEST_F(RosBag2PlayForTestFixture, play_for_all_are_played_due_to_duration)
 
   auto replayed_test_primitives = sub_->get_received_messages<test_msgs::msg::BasicTypes>(
     kTopic1);
-  EXPECT_THAT(replayed_test_primitives, SizeIs(Ge(2u)));
+  EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(3u)));
   EVAL_REPLAYED_PRIMITIVES(replayed_test_primitives);
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>(
     kTopic2);
-  EXPECT_THAT(replayed_test_arrays, SizeIs(Ge(2u)));
+  EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(3u)));
   EVAL_REPLAYED_BOOL_ARRAY_PRIMITIVES(replayed_test_arrays);
   EVAL_REPLAYED_FLOAT_ARRAY_PRIMITIVES(replayed_test_arrays);
 }
@@ -212,7 +210,7 @@ TEST_F(
   auto replayed_test_primitives =
     sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
   // No messages are allowed to have arrived
-  EXPECT_THAT(replayed_test_primitives, SizeIs(0u));
+  EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(0u)));
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
   // All messages should have arrived.
@@ -230,11 +228,11 @@ TEST_F(
   auto replayed_test_primitives =
     sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
   // No messages are allowed to have arrived
-  EXPECT_THAT(replayed_test_primitives, SizeIs(0u));
+  EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(0u)));
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
   // All messages should have arrived.
-  EXPECT_THAT(replayed_test_arrays, SizeIs(0u));
+  EXPECT_THAT(replayed_test_arrays, SizeIs(Eq(0u)));
 }
 
 TEST_F(
@@ -246,7 +244,7 @@ TEST_F(
   auto replayed_test_primitives =
     sub_->get_received_messages<test_msgs::msg::BasicTypes>("/topic1");
   // No messages are allowed to have arrived
-  EXPECT_THAT(replayed_test_primitives, SizeIs(0u));
+  EXPECT_THAT(replayed_test_primitives, SizeIs(Eq(0u)));
 
   auto replayed_test_arrays = sub_->get_received_messages<test_msgs::msg::Arrays>("/topic2");
   // Some messages should have arrived.
