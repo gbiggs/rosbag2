@@ -290,8 +290,7 @@ PYBIND11_MODULE(_transport, m) {
 
   py::class_<rosbag2_py::Player>(m, "Player")
   .def(py::init())
-  .def(
-    "play", &rosbag2_py::Player::play, py::arg("storage_options"), py::arg("play_options"))
+  .def("play", &rosbag2_py::Player::play, py::arg("storage_options"), py::arg("play_options"))
   ;
 
   py::class_<rosbag2_py::Recorder>(m, "Recorder")
