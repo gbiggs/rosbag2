@@ -126,11 +126,8 @@ public:
     sub_->add_subscription<test_msgs::msg::BasicTypes>(kTopic1, 3);
     sub_->add_subscription<test_msgs::msg::Arrays>(kTopic2, 3);
 
-    play_options_.playback_duration =
-      rclcpp::Duration(std::chrono::nanoseconds(std::chrono::milliseconds(milliseconds)));
-    player_ = std::make_shared<MockPlayer>(
-      std::move(
-        reader), storage_options_, play_options_);
+    play_options_.playback_duration = rclcpp::Duration(std::chrono::milliseconds(milliseconds));
+    player_ = std::make_shared<MockPlayer>(std::move(reader), storage_options_, play_options_);
     // Wait for discovery to match publishers with subscribers
     ASSERT_TRUE(
       sub_->spin_and_wait_for_matched(player_->get_list_of_publishers(), std::chrono::seconds(5)));

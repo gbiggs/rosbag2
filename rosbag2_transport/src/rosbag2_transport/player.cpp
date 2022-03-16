@@ -202,15 +202,9 @@ void Player::play()
       "Invalid delay value: " << play_options_.delay.nanoseconds() << ". Delay is disabled.");
   }
 
-  rcutils_time_point_value_t play_until_time = starting_time_;
+  rcutils_time_point_value_t play_until_time = -1;
   if (play_options_.playback_duration >= rclcpp::Duration(0, 0)) {
-    play_until_time += play_options_.playback_duration.nanoseconds();
-  } else {
-    play_until_time = -1;
-    RCLCPP_INFO_STREAM(
-      get_logger(),
-      "Invalid playback duration value: " << play_options_.playback_duration.nanoseconds() <<
-        ". Playback duration is disabled.");
+    play_until_time = starting_time_ + play_options_.playback_duration.nanoseconds();
   }
   RCLCPP_INFO_STREAM(get_logger(), "Playback duration value: " << play_until_time);
 
@@ -671,11 +665,8 @@ void Player::create_control_services()
       rosbag2_interfaces::srv::Play::Request::ConstSharedPtr request,
       rosbag2_interfaces::srv::Play::Response::SharedPtr response)
     {
-      play_options_.start_offset =
-      static_cast<rcutils_time_point_value_t>(RCUTILS_S_TO_NS(request->start_offset.sec)) +
-      static_cast<rcutils_time_point_value_t>(request->start_offset.nanosec);
-      play_options_.playback_duration = rclcpp::Duration(
-        request->playback_duration.sec, request->playback_duration.nanosec);
+      play_options_.start_offset = rclcpp::Time(request->start_offset).nanoseconds();
+      play_options_.playback_duration = rclcpp::Duration(request->playback_duration);
       play();
       response->success = true;
     });
