@@ -131,8 +131,7 @@ public:
 
   void play(
     const rosbag2_storage::StorageOptions & storage_options,
-    PlayOptions & play_options,
-    const std::optional<rcutils_duration_value_t> & duration)
+    PlayOptions & play_options)
   {
     auto reader = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options);
     auto player = std::make_shared<rosbag2_transport::Player>(
@@ -144,7 +143,7 @@ public:
       [&exec]() {
         exec.spin();
       });
-    player->play(duration);
+    player->play();
 
     exec.cancel();
     spin_thread.join();
