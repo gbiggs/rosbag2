@@ -191,8 +191,14 @@ bool Player::is_storage_completely_loaded() const
   return !storage_loading_future_.valid();
 }
 
-void Player::play()
+bool Player::play()
 {
+  if (is_in_playback_) {
+    RCLCPP_WARN_STREAM(get_logger(), "Trying to play() while in playback, dismissing request.");
+    return false;
+  }
+  is_in_playback_ = true;
+
   rclcpp::Duration delay(0, 0);
   if (play_options_.delay >= rclcpp::Duration(0, 0)) {
     delay = play_options_.delay;
@@ -260,6 +266,9 @@ void Player::play()
       }
     }
   }
+
+  is_in_playback_ = false;
+  return true;
 }
 
 void Player::pause()
@@ -667,8 +676,7 @@ void Player::create_control_services()
     {
       play_options_.start_offset = rclcpp::Time(request->start_offset).nanoseconds();
       play_options_.playback_duration = rclcpp::Duration(request->playback_duration);
-      play();
-      response->success = true;
+      response->success = play();
     });
   srv_play_next_ = create_service<rosbag2_interfaces::srv::PlayNext>(
     "~/play_next",
