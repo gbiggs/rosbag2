@@ -103,6 +103,7 @@ Recorder::~Recorder()
   if (discovery_future_.valid()) {
     discovery_future_.wait();
   }
+  writer_.reset();
 
   subscriptions_.clear();
 }
